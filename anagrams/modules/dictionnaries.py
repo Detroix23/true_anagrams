@@ -123,6 +123,9 @@ def intersect(
         if loading_animation is not None:
             loading_animation.counters["words"] += 1
     
+        
+    if loading_animation is not None:
+        loading_animation.finish()
     print("")
     return set(filtered)
 

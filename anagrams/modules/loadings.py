@@ -6,16 +6,26 @@ Utilize the \r escape operator
 """
 
 import time
+from enum import Enum
+
+class State(Enum):
+    READY = 0
+    RUNNING = 1
+    FINISHED = 2
 
 class Animation:
+    _i: int
+    first_time: float
+
+    state: State
+
     def __init__(self) -> None:
         self._i = 0
         self.first_time: float = 0
 
+        self.state: State = State.READY
+
 class Bar(Animation):
-    _i: int
-    progress_bar_symbol: str
-    
     def __init__(
         self, 
         progress: str, 
@@ -43,10 +53,12 @@ class Bar(Animation):
         """
         self._i = 0
         self.first_time: float = 0
+        self.state = State.READY
 
     def increment(self, add: int = 1) -> None:
         if self.first_time == 0:
             self.first_time = time.monotonic()
+            self.state = State.RUNNING
         
         self._i += add
         bar: str
@@ -95,19 +107,18 @@ class Bar(Animation):
         """
         if self._i < self.max:
             self._i = self.max
+        
+        self.state = State.FINISHED
         self.increment(0)
 
 class Spinner(Animation):
-    _i: int
-    progress_bar_symbol: str
-    
     def __init__(
         self, 
         symbols: list[str] | str, 
         max: int = 0,
         *, span: int = 1, 
         multiple: int = 1,
-        finish: str = "░",
+        finish: str = "█",
         borders: str = "|",
         prefix: str = "Loading: ",
         suffix: str = " ",
@@ -123,7 +134,9 @@ class Spinner(Animation):
         self.prefix: str = prefix
         self.suffix: str = suffix
         self.span: int = span
+        
         self.finish_character: str = finish
+        self.ready_character: str = "..."
 
         self.counters: dict[str, int] = {counter: 0 for counter in more_counters}
 
@@ -142,7 +155,9 @@ class Spinner(Animation):
         """
         self._i = 0
         self.first_time: float = 0
-
+        self.state = State.READY
+        # Update custom counters
+        self.counters = {key: 0 for key in self.counters.keys()}
 
     def increment(self, add: int = 1) -> None:
         """
@@ -150,6 +165,7 @@ class Spinner(Animation):
         """
         if self.first_time == 0:
             self.first_time = time.monotonic()
+            self.state = State.RUNNING
         
         self._i += add
         i: int = self._i // self.multiple
@@ -160,9 +176,15 @@ class Spinner(Animation):
         
         template: str = "\r"
 
+        # Drawing
         template += self.prefix
         template += self.borders
-        template += spinner
+        if self.state == State.FINISHED:
+            template += f"{self.finish_character * self.span}"
+        elif self.state == State.READY:
+            template += f"{self.ready_character * self.span}"
+        else:
+            template += spinner
         template += self.borders
         template += " - "
 
@@ -203,10 +225,12 @@ class Spinner(Animation):
     def finish(self) -> None:
         """
         Allow to prematurly and ensure the spinner to complete.
-
+        Set the state to FINISHED, and update one last time.
         """
         if self._i < self.max:
             self._i = self.max
+
+        self.state = State.FINISHED
         self.increment(0)
 
 # Default

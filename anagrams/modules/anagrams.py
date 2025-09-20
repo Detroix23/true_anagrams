@@ -5,28 +5,45 @@ anagrams.py
 
 import modules.loadings as loadings
 
+def slide(anagram: str, letter: str, k: int) -> str:
+    """
+    Insert in k position the lettre, in between anagram.
+    """
+    return anagram[:k] + letter + anagram[k:]
+
 def get_all_combinations(word: str, loading_animation: loadings.Spinner | None = None) -> set[str]:
+    """
+    Returns a set formed of all possible anagrams of the given word.
+    No duplicate; using Python's sets.
+    """
     ignore_case: bool = True
     
     if ignore_case:
         word = word.lower()
 
     def get_all_combinations_in(word: str, loading_animation: loadings.Spinner | None) -> set[str]:
-        if loading_animation is not None:
-            loading_animation.increment()
+        combinations: set[str]
+
         if word == '' : 
-            return set()
+            combinations = set()
         elif len(word) == 1 :
-            return {word}
+            combinations = {word}
         else:
-            l: list[str] = []
+            combinations: set[str] = set()
             for anagram in get_all_combinations_in(word[1:], loading_animation):
                 for k in range(len(word)):
-                    l.append(anagram[:k] + word[0] + anagram[k:])
-            return set(l)
+                    combinations.add(slide(anagram, word[0], k))
+                if loading_animation is not None:
+                    loading_animation.increment(len(word))
+                    
+        if loading_animation is not None:
+            loading_animation.counters["anagrams"] = len(combinations)
+        return combinations
 
     result: set[str] = get_all_combinations_in(word, loading_animation)
     
+    if loading_animation is not None:
+        loading_animation.finish()
     print("")
     return result
 

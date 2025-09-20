@@ -20,11 +20,11 @@ def main_ui() -> None:
     loading_intersect.prefix = "Searching dict: "
     loading_intersect.multiple = 700
     loading_intersect.more_counters("words")
-    loading_intersect.counters["words"] += 1
 
     loading_combinations: loadings.Spinner = loadings.spinners["Wave2"].__copy__()
-    loading_combinations.multiple = 1
+    loading_combinations.multiple = 15000
     loading_combinations.prefix = "Anagrams: "
+    loading_combinations.more_counters("anagrams")
 
     # Main
     print("# ANAGRAMS.")
@@ -43,20 +43,22 @@ def main_ui() -> None:
                     user_anagrams, 
                     dictionnary_path,
                     blacklist={user_word},
-                    loading_animation=loading_intersect
+                    loading_animation=loading_intersect,
                 )
 
                 if matching_anagrams:
                     print(f"=> Correct anagrams {len(matching_anagrams)}/{len(user_anagrams)}:")
                     print(set_to_table(
                         matching_anagrams,
-                        row_prefix="\t│"
+                        row_prefix="\t│",
                     ))
                 else:
                     print(f"=> Correct anagrams 0/{len(user_anagrams)}:")
                     print("\tNo correct anagrams! ")
 
                 print("")
+                loading_combinations.reset()
+                loading_intersect.reset()
 
     except KeyboardInterrupt:
         print("\n(+) - User interrupt (Ctrl+C).")
