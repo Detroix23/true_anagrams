@@ -5681,7 +5681,7 @@ crepi
 crepir
 crepiter
 crepu
-crepus)
+crepus
 crepuscule
 cresson
 crete

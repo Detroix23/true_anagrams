@@ -1,8 +1,11 @@
+"""
+ANAGRAMS
+dictionnaries.py
+"""
+
 from pathlib import Path
 
-
 ords = list[int]
-
 
 def str_to_ords(word: str) -> ords:
     ascii_chars: ords = []
@@ -35,8 +38,11 @@ def greater_ords(a: ords, b: ords) -> ords:
             return a
         elif i_b > i_a:
             return b
-    return a
-
+    
+    if len(a) < len(b):
+        return b
+    else:
+        return a
 
 def in_dict(word: str, dictionnary_path: Path) -> bool:
     """
@@ -53,19 +59,33 @@ def in_dict(word: str, dictionnary_path: Path) -> bool:
     bool
         True if in dict, False otherwise.
     """
-    
+    ignore_case: bool = True
+
     def in_dict_body(
-        word: ords, 
+        word: str, 
         dictionnary: list[str], 
         bound_start: int, 
-        bound_end: int
+        bound_end: int,
     ) -> bool:
+        if ignore_case:
+            word = word.lower()
+
+        #print(f"start: {bound_start} {dictionnary[bound_start]}, end: {bound_end} {dictionnary[bound_end]}")
         if bound_start > bound_end:
             return False
         mid: int = (bound_start + bound_end) // 2
-        if dictionnary[mid] == word:
+        mid_value: str
+        if ignore_case:
+            mid_value = dictionnary[mid].lower()
+        else:
+            mid_value = dictionnary[mid]
+
+        if mid_value == word:
             return True
-        elif greater_word(dictionnary[mid], word):
+        
+        greater: str = greater_word(mid_value, word)
+        #print(f"{mid_value}, {word}: {greater}")
+        if greater == mid_value:
             return in_dict_body(word, dictionnary, bound_start, mid - 1)
         return in_dict_body(word, dictionnary, mid + 1, bound_end)
     
@@ -74,7 +94,6 @@ def in_dict(word: str, dictionnary_path: Path) -> bool:
     else:
         with open(dictionnary_path, "r") as file:
             words: list[str] = [line.rstrip() for line in file]
-            print(words[50:])
             return in_dict_body(word, words, 0, len(words) - 1)    
     
     
@@ -89,11 +108,9 @@ if __name__ == "__main__":
     print(ords_to_str(greater_ords(str_to_ords("aaa"), str_to_ords("abc"))))
     print(ords_to_str(greater_ords(str_to_ords("uui"), str_to_ords("uua"))))
     
-    
-    print("", in_dict("abaisse", paths.FRENCH_NO_DIAC))
-    print(in_dict("kqldsflkqsdjf", paths.FRENCH_NO_DIAC))
-    print(in_dict("zebre", paths.FRENCH_NO_DIAC))
-    print(in_dict("", paths.FRENCH_NO_DIAC))
-    
-    
-    
+    print(greater_word("apprehension", "abaisse"))
+
+    print("abaisse: ", in_dict("abaisse", paths.FRENCH_NO_DIAC))
+    print("kqldsflkqsdjf: ", in_dict("kqldsflkqsdjf", paths.FRENCH_NO_DIAC))
+    print("zebre: ", in_dict("zebre", paths.FRENCH_NO_DIAC))
+    print("<EMPTY>: ", in_dict("", paths.FRENCH_NO_DIAC))
