@@ -3,17 +3,32 @@ ANAGRAMS
 anagrams.py
 """
 
-def get_all_combinations(word: str) -> set[str]:
-    if word == '' : 
-      return set()
-    elif len(word) == 1 :
-       return {word}
-    else:
-        l: list[str] = []
-        for anagram in get_all_combinations(word[1:]):
-            for k in range(len(word)):
-                l.append(anagram[:k] + word[0] + anagram[k:])
-        return set(l)
+import modules.loadings as loadings
+
+def get_all_combinations(word: str, loading_animation: loadings.Spinner | None = None) -> set[str]:
+    ignore_case: bool = True
+    
+    if ignore_case:
+        word = word.lower()
+
+    def get_all_combinations_in(word: str, loading_animation: loadings.Spinner | None) -> set[str]:
+        if loading_animation is not None:
+            loading_animation.increment()
+        if word == '' : 
+            return set()
+        elif len(word) == 1 :
+            return {word}
+        else:
+            l: list[str] = []
+            for anagram in get_all_combinations_in(word[1:], loading_animation):
+                for k in range(len(word)):
+                    l.append(anagram[:k] + word[0] + anagram[k:])
+            return set(l)
+
+    result: set[str] = get_all_combinations_in(word, loading_animation)
+    
+    print("")
+    return result
 
 """
 # Numpy version

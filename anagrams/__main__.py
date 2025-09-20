@@ -3,11 +3,12 @@ ANAGRAMS
 __main__.py
 """
 
-import modules.paths as paths
+import modules.ui as ui
 
+
+def main() -> None:
+    ui.main_ui()
 
 if __name__ == "__main__":
-    with open(paths.FRENCH_NO_DIAC, "r") as all_words:
-        for _ in range(50):
-            print(all_words.readline(), end="")
+    main()
     

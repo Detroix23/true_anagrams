@@ -4,6 +4,7 @@ dictionnaries.py
 """
 
 from pathlib import Path
+import modules.loadings as loadings
 
 ords = list[int]
 
@@ -44,7 +45,11 @@ def greater_ords(a: ords, b: ords) -> ords:
     else:
         return a
 
-def in_dict(word: str, dictionnary_path: Path) -> bool:
+def in_dict(
+    word: str, 
+    dictionnary_path: Path,
+    loading_animation: loadings.Spinner | None = None
+) -> bool:
     """
     Search using dichotomy a word.
     Parameters
@@ -66,7 +71,11 @@ def in_dict(word: str, dictionnary_path: Path) -> bool:
         dictionnary: list[str], 
         bound_start: int, 
         bound_end: int,
+        loading_animation: loadings.Spinner | None = None
     ) -> bool:
+        if loading_animation is not None:
+            loading_animation.increment()
+
         if ignore_case:
             word = word.lower()
 
@@ -86,17 +95,38 @@ def in_dict(word: str, dictionnary_path: Path) -> bool:
         greater: str = greater_word(mid_value, word)
         #print(f"{mid_value}, {word}: {greater}")
         if greater == mid_value:
-            return in_dict_body(word, dictionnary, bound_start, mid - 1)
-        return in_dict_body(word, dictionnary, mid + 1, bound_end)
+            return in_dict_body(word, dictionnary, bound_start, mid - 1, loading_animation)
+        return in_dict_body(word, dictionnary, mid + 1, bound_end, loading_animation)
     
     if not word:
         return False
-    else:
-        with open(dictionnary_path, "r") as file:
-            words: list[str] = [line.rstrip() for line in file]
-            return in_dict_body(word, words, 0, len(words) - 1)    
     
+    with open(dictionnary_path, "r") as file:
+        words: list[str] = [line.rstrip() for line in file]
+        result: bool = in_dict_body(word, words, 0, len(words) - 1, loading_animation)
+        return result
     
+def intersect(
+    words: set[str], 
+    dictionnary_path: Path, 
+    blacklist: set[str] = set(),
+    loading_animation: loadings.Spinner | None = None,
+) -> set[str]:
+    """
+    Use the `in_dict` function on a set to filter words.
+    """
+    filtered: list[str] = []
+
+    for word in words:
+        if in_dict(word, dictionnary_path, loading_animation) and word not in blacklist:
+            filtered.append(word)
+        if loading_animation is not None:
+            loading_animation.counters["words"] += 1
+    
+    print("")
+    return set(filtered)
+
+
 
 if __name__ == "__main__":
     print("# DICTIONNARIES")
