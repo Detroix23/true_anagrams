@@ -2,7 +2,6 @@
 ANAGRAMS
 paths.py
 """
-
 from pathlib import Path
 
 # Dictionnaries

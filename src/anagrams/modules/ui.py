@@ -5,40 +5,9 @@ ui.py
 
 import modules.paths as paths
 import modules.anagrams as anagrams
-import modules.dictionnaries as dictionnaries
+import modules.dictionaries as dictionaries
 import modules.loadings as loadings
-
-ART: dict[str, str] = {
-    "Title": """
-
- _____                                                                            _____ 
-( ___ )                                                                          ( ___ )
- |   |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|   | 
- |   |                                                                            |   | 
- |   |   ████████╗██████╗ ██╗   ██╗███████╗                                       |   | 
- |   |   ╚══██╔══╝██╔══██╗██║   ██║██╔════╝                                       |   | 
- |   |      ██║   ██████╔╝██║   ██║█████╗                                         |   | 
- |   |      ██║   ██╔══██╗██║   ██║██╔══╝                                         |   | 
- |   |      ██║   ██║  ██║╚██████╔╝███████╗                                       |   | 
- |   |      ╚═╝   ╚═╝  ╚═╝ ╚═════╝ ╚══════╝                                       |   | 
- |   |    █████╗ ███╗   ██╗ █████╗  ██████╗ ██████╗  █████╗ ███╗   ███╗███████╗   |   | 
- |   |   ██╔══██╗████╗  ██║██╔══██╗██╔════╝ ██╔══██╗██╔══██╗████╗ ████║██╔════╝   |   | 
- |   |   ███████║██╔██╗ ██║███████║██║  ███╗██████╔╝███████║██╔████╔██║███████╗   |   | 
- |   |   ██╔══██║██║╚██╗██║██╔══██║██║   ██║██╔══██╗██╔══██║██║╚██╔╝██║╚════██║   |   | 
- |   |   ██║  ██║██║ ╚████║██║  ██║╚██████╔╝██║  ██║██║  ██║██║ ╚═╝ ██║███████║   |   | 
- |   |   ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝   |   | 
- |   |                                                                            |   | 
- |___|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|___| 
-(_____)                                                                          (_____)
-""",
-    "Border1": """
-
-     ███ ███   ███ ███   ███ ███   ███ ███   ░░░ ░░░   ░░░ ░░░     
-   ███░███░  ███░███░  ███░███░  ███░███░  ███░███░  ░░░ ░░░ 
-  ░░░ ░░░   ░░░ ░░░   ░░░ ░░░   ░░░ ░░░   ░░░ ░░░                   
- 
-"""
-}
+import modules.art as art
 
 class Style:
     ENDC = '\033[0m'
@@ -63,7 +32,8 @@ def main_ui(
     """
     # Vars
     dictionnary_path: paths.Path = paths.FRENCH_NO_DIAC
-    
+    dictionnary_infos = dictionaries.dict_info(dictionnary_path)
+
     # Loading animations.
     loading_combinations: loadings.Spinner | None = None
     loading_intersect: loadings.Spinner | None = None
@@ -87,17 +57,20 @@ def main_ui(
         print(f"{Style.ENDC}")
 
     if ascii_art:
-        print(ART["Title"])
+        print(art.TITLE)
     else:
         print("\n# True Anagrams.\n")
     if credit_text:
-        print(f" {Style.HEADER}By Detroix23, 2025.{Style.ENDC}")
-        print("  https://github.com/Detroix23/TrueAnagrams")
-        print("  CC-BY 4.0")
+        print(f"{Style.HEADER}By Detroix23, 2025.{Style.ENDC}")
+        print(f"{art.TAB}https://github.com/Detroix23/TrueAnagrams")
+        print(f"{art.TAB}CC-BY 4.0")
         print()
-    print(f" {Style.OKCYAN}( Using dictionnary: {Style.BOLD}{dictionnary_path}{Style.ENDC}{Style.OKCYAN} ){Style.ENDC}")
+    print(f"{Style.OKCYAN}Using dictionnary: {Style.BOLD}{dictionnary_path}{Style.ENDC}")
+    print(f"{art.TAB}Words: {dictionnary_infos.entries}")
+    print(f"{art.TAB}Is sorted: {dictionnary_infos.sort}")
+
     if ascii_art:
-        print(f"{ART["Border1"]}")
+        print(f"{art.BORDER3}")
 
     try:
         while True:
@@ -110,7 +83,7 @@ def main_ui(
                 )
                 print(f"Found {len(user_anagrams)} anagrams.")
                 
-                matching_anagrams: set[str] = dictionnaries.intersect(
+                matching_anagrams: set[str] = dictionaries.intersect(
                     user_anagrams, 
                     dictionnary_path,
                     blacklist={user_word},

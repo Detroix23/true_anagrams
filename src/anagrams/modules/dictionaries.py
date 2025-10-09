@@ -2,48 +2,43 @@
 ANAGRAMS
 dictionnaries.py
 """
-
 from pathlib import Path
+
+import modules.files as files
+import modules.sorting as sorting
 import modules.loadings as loadings
 
-ords = list[int]
+class Infos:
+    """
+    A data class to nicely store informations about a natural dictionary.
+    """
+    entries: int
+    sort: bool
 
-def str_to_ords(word: str) -> ords:
-    ascii_chars: ords = []
-    for letter in word:
-        ascii_chars.append(ord(letter))
+    def __init__(self, entries: int, sort: bool) -> None:
+        self.entries = entries
+        self.sort = sort
     
-    return ascii_chars
+    def __repr__(self) -> str:
+        return f"Infos(entries: {self.entries}, sort: {self.sort})"
 
-def ords_to_str(ascii_list: ords) -> str:
-    string: str = ""
-    for index in ascii_list:
-        if not 0 < index < 255:
-            raise ValueError(f"(X) - Non ASCII value {index}.")
-        string += chr(index)
-    
-    return string
 
-def greater_str(a: str, b: str) -> str:
-    if ord(a) > ord(b):
-        return a
-    else:
-        return b
+def dict_info(dict_path: Path) -> Infos:
+    """
+    Return useful info about a dictionary.
+    """
+    # Line count.
+    entries: int = 0
+    with open(dict_path, "r") as words:
+        entries = files.count_entries(words)
+    # Sort.
+    is_sorted: bool = True
 
-def greater_word(a: str, b: str) -> str:
-    return ords_to_str(greater_ords(str_to_ords(a), str_to_ords(b)))
+    return Infos(
+        entries,
+        is_sorted,
+    )
 
-def greater_ords(a: ords, b: ords) -> ords:
-    for i_a, i_b in zip(a, b):
-        if i_a > i_b:
-            return a
-        elif i_b > i_a:
-            return b
-    
-    if len(a) < len(b):
-        return b
-    else:
-        return a
 
 def in_dict(
     word: str, 
@@ -89,10 +84,11 @@ def in_dict(
         else:
             mid_value = dictionnary[mid]
 
+        # Dichotomy.
         if mid_value == word:
             return True
         
-        greater: str = greater_word(mid_value, word)
+        greater: str = sorting.greater_word(mid_value, word)
         #print(f"{mid_value}, {word}: {greater}")
         if greater == mid_value:
             return in_dict_body(word, dictionnary, bound_start, mid - 1, loading_animation)
@@ -102,7 +98,7 @@ def in_dict(
         return False
     
     with open(dictionnary_path, "r") as file:
-        words: list[str] = [line.rstrip() for line in file]
+        words: list[str] = files.load_into_list(file)
         result: bool = in_dict_body(word, words, 0, len(words) - 1, loading_animation)
         return result
     
@@ -135,13 +131,6 @@ if __name__ == "__main__":
     print("# DICTIONNARIES")
     
     import paths
-    
-    print(ords_to_str(greater_ords(str_to_ords("abc"), str_to_ords("aaa"))))
-    print(ords_to_str(greater_ords(str_to_ords("aaa"), str_to_ords("aaa"))))
-    print(ords_to_str(greater_ords(str_to_ords("aaa"), str_to_ords("abc"))))
-    print(ords_to_str(greater_ords(str_to_ords("uui"), str_to_ords("uua"))))
-    
-    print(greater_word("apprehension", "abaisse"))
 
     print("abaisse: ", in_dict("abaisse", paths.FRENCH_NO_DIAC))
     print("kqldsflkqsdjf: ", in_dict("kqldsflkqsdjf", paths.FRENCH_NO_DIAC))
