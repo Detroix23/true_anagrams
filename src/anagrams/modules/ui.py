@@ -52,7 +52,12 @@ class Style:
     OKCYAN = '\033[96m'
 
 
-def main_ui() -> None:
+def main_ui(
+    loading_bars: bool,
+    ascii_art: bool,
+    error_args: list[str],
+    credit_text: bool,
+) -> None:
     """
     Main function execute on run.
     """
@@ -60,24 +65,39 @@ def main_ui() -> None:
     dictionnary_path: paths.Path = paths.FRENCH_NO_DIAC
     
     # Loading animations.
-    loading_intersect: loadings.Spinner = loadings.spinners["Wave2"].__copy__()
-    loading_intersect.prefix = "Searching dict: "
-    loading_intersect.multiple = 1000
-    loading_intersect.more_counters("words")
+    loading_combinations: loadings.Spinner | None = None
+    loading_intersect: loadings.Spinner | None = None
+    if loading_bars:
+        loading_combinations = loadings.spinners["Wave2"].__copy__()
+        loading_combinations.multiple = 15000
+        loading_combinations.prefix = "Anagrams: "
+        loading_combinations.more_counters("anagrams")
 
-    loading_combinations: loadings.Spinner = loadings.spinners["Wave2"].__copy__()
-    loading_combinations.multiple = 15000
-    loading_combinations.prefix = "Anagrams: "
-    loading_combinations.more_counters("anagrams")
+        loading_intersect = loadings.spinners["Wave2"].__copy__()
+        loading_intersect.prefix = "Searching dict: "
+        loading_intersect.multiple = 1000
+        loading_intersect.more_counters("words")
+
 
     # Main
-    print(ART["Title"])
-    print(f" {Style.HEADER}By Detroix23, 2025.{Style.ENDC}")
-    print("  https://github.com/Detroix23/TrueAnagrams")
-    print("  CC-BY 4.0")
-    print()
+    if error_args:
+        print(f"{Style.FAIL}(!) - Some invalid arguments:", end=" ")
+        for arg in error_args:
+            print(f"`{arg}`", end=" ")
+        print(f"{Style.ENDC}")
+
+    if ascii_art:
+        print(ART["Title"])
+    else:
+        print("\n# True Anagrams.\n")
+    if credit_text:
+        print(f" {Style.HEADER}By Detroix23, 2025.{Style.ENDC}")
+        print("  https://github.com/Detroix23/TrueAnagrams")
+        print("  CC-BY 4.0")
+        print()
     print(f" {Style.OKCYAN}( Using dictionnary: {Style.BOLD}{dictionnary_path}{Style.ENDC}{Style.OKCYAN} ){Style.ENDC}")
-    print(f"{ART["Border1"]}")
+    if ascii_art:
+        print(f"{ART["Border1"]}")
 
     try:
         while True:
@@ -108,8 +128,9 @@ def main_ui() -> None:
                     print(f"\t{Style.FAIL}No correct anagrams!{Style.ENDC}")
 
                 print("")
-                loading_combinations.reset()
-                loading_intersect.reset()
+                if loading_bars and loading_combinations is not None and loading_intersect is not None:
+                    loading_combinations.reset()
+                    loading_intersect.reset()
 
     except KeyboardInterrupt:
         print(f"\n{Style.ENDC}{Style.WARNING}(+) - User interrupt (Ctrl+C).{Style.ENDC}")
