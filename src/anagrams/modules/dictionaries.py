@@ -28,14 +28,14 @@ def dict_info(dict_path: Path) -> Infos:
     Return useful info about a dictionary.
     """
     # Line count.
-    entries: int = 0
+    lines: list[str] = list()
     with open(dict_path, "r") as words:
-        entries = files.count_entries(words)
+        lines = files.load_into_list(words)
     # Sort.
-    is_sorted: bool = True
+    is_sorted: bool = sorting.check(lines)
 
     return Infos(
-        entries,
+        len(lines),
         is_sorted,
     )
 
