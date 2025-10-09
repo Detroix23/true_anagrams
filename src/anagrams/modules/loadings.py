@@ -13,6 +13,7 @@ class State(Enum):
     RUNNING = 1
     FINISHED = 2
 
+
 class Animation:
     _i: int
     first_time: float
@@ -24,6 +25,7 @@ class Animation:
         self.first_time: float = 0
 
         self.state: State = State.READY
+
 
 class Bar(Animation):
     def __init__(
@@ -122,7 +124,8 @@ class Spinner(Animation):
         borders: str = "|",
         prefix: str = "Loading: ",
         suffix: str = " ",
-        more_counters: list[str] = list()
+        more_counters: list[str] = list(),
+        more_per_second: bool = False,
     ) -> None:
         super().__init__()
 
@@ -139,6 +142,7 @@ class Spinner(Animation):
         self.ready_character: str = "..."
 
         self.counters: dict[str, int] = {counter: 0 for counter in more_counters}
+        self.per_second: bool = more_per_second
 
     def more_counters(self, more_counters: list[str] | str) -> None:
         """
@@ -174,6 +178,8 @@ class Spinner(Animation):
         for j in range(self.span):
             spinner += self.symbols[(i + j) % len(self.symbols)]
         
+        time_elapsed: float = time.monotonic() - self.first_time
+
         template: str = "\r"
 
         # Drawing
@@ -200,9 +206,10 @@ class Spinner(Animation):
         if self.counters:
             for name, count in self.counters.items():
                 template += f"{name}: {count} "
+                if time_elapsed != 0 and self.per_second:
+                    template += f"{count / time_elapsed:.1f}/s "
 
         # Time counter
-        time_elapsed: float = time.monotonic() - self.first_time
         template += f"{time_elapsed:.2f}s "
 
         template += self.suffix

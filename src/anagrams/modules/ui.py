@@ -2,6 +2,7 @@
 ANAGRAMS
 ui.py
 """
+import sys
 
 import modules.paths as paths
 import modules.anagrams as anagrams
@@ -9,16 +10,18 @@ import modules.dictionaries as dictionaries
 import modules.loadings as loadings
 import modules.art as art
 
+ESC: str = "\033"
+
 class Style:
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
-    FAIL = '\033[91m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    OKBLUE = '\033[94m'
-    HEADER = '\033[95m'
-    OKCYAN = '\033[96m'
+    ENDC = ESC + '[0m'
+    BOLD = ESC + '[1m'
+    UNDERLINE = ESC + '[4m'
+    FAIL = ESC + '[91m'
+    OKGREEN = ESC + '[92m'
+    WARNING = ESC + '[93m'
+    OKBLUE = ESC + '[94m'
+    HEADER = ESC + '[95m'
+    OKCYAN = ESC + '[96m'
 
 
 def main_ui(
@@ -32,7 +35,7 @@ def main_ui(
     """
     # Vars
     dictionnary_path: paths.Path = paths.FRENCH_NO_DIAC
-    dictionnary_infos = dictionaries.dict_info(dictionnary_path)
+    dictionnary_infos: dictionaries.Infos = dictionaries.dict_info(dictionnary_path)
 
     # Loading animations.
     loading_combinations: loadings.Spinner | None = None
@@ -46,6 +49,7 @@ def main_ui(
         loading_intersect = loadings.spinners["Wave2"].__copy__()
         loading_intersect.prefix = "Searching dict: "
         loading_intersect.multiple = 1000
+        loading_intersect.per_second = True
         loading_intersect.more_counters("words")
 
 
@@ -76,7 +80,16 @@ def main_ui(
         while True:
             user_word: str = input(f"- Enter a word: {Style.BOLD}")
             print(f"{Style.ENDC}", end="")
-            if user_word:
+            
+            if user_word == "":
+                # Move up.
+                sys.stdout.write(ESC + "[1A")
+                # Clear to the bottom end of the screen.
+                # sys.stdout.write(ESC + "[J")
+
+                sys.stdout.flush()
+
+            elif user_word:
                 user_anagrams: set[str] = anagrams.get_all_combinations(
                     user_word,
                     loading_animation=loading_combinations
