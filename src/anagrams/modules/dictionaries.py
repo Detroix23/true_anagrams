@@ -14,11 +14,13 @@ class Infos:
     """
     entries: int
     sort: bool
+    path: str
 
-    def __init__(self, entries: int, sort: bool) -> None:
+    def __init__(self, entries: int, sort: bool, path: str) -> None:
         self.entries = entries
         self.sort = sort
-    
+        self.path = path
+
     def __repr__(self) -> str:
         return f"Infos(entries: {self.entries}, sort: {self.sort})"
 
@@ -37,6 +39,7 @@ def dict_info(dict_path: Path) -> Infos:
     return Infos(
         len(lines),
         is_sorted,
+        str(dict_path)
     )
 
 
@@ -132,7 +135,7 @@ if __name__ == "__main__":
     
     import paths
 
-    print("abaisse: ", in_dict("abaisse", paths.FRENCH_NO_DIAC))
-    print("kqldsflkqsdjf: ", in_dict("kqldsflkqsdjf", paths.FRENCH_NO_DIAC))
-    print("zebre: ", in_dict("zebre", paths.FRENCH_NO_DIAC))
-    print("<EMPTY>: ", in_dict("", paths.FRENCH_NO_DIAC))
+    print("abaisse: ", in_dict("abaisse", paths.DICTIONARIES / "fr_no-diac_22k.txt"))
+    print("kqldsflkqsdjf: ", in_dict("kqldsflkqsdjf", paths.DICTIONARIES / "fr_no-diac_22k.txt"))
+    print("zebre: ", in_dict("zebre", paths.DICTIONARIES / "fr_no-diac_22k.txt"))
+    print("<EMPTY>: ", in_dict("", paths.DICTIONARIES / "fr_no-diac_22k.txt"))

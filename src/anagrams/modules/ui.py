@@ -5,6 +5,8 @@ ui.py
 import sys
 
 import modules.paths as paths
+import modules.files as files
+import modules.sorting as sorting
 import modules.anagrams as anagrams
 import modules.dictionaries as dictionaries
 import modules.loadings as loadings
@@ -29,13 +31,30 @@ def main_ui(
     ascii_art: bool,
     error_args: list[str],
     credit_text: bool,
+    dictionary_name: str
 ) -> None:
     """
     Main function execute on run.
     """
-    # Vars
-    dictionnary_path: paths.Path = paths.FRENCH_NO_DIAC
+    # Initialization.
+    dictionnary_path: paths.Path = paths.DICTIONARIES / dictionary_name
+
+    # Sorting.
+    dictionnary_sort: bool
+    with open(dictionnary_path, "r") as file:
+        dictionary: list[str] = files.load_into_list(file)
+        dictionnary_sort = sorting.check(dictionary)
+        if not dictionnary_sort:
+            print("Not sorted.")
+            print("SORTING A NEW")
+            sorting.sort(dictionary)
+            sorting.check(dictionary, raise_on_unsorted=False)
+            print("WRITING A NEW")
+            files.write_list(dictionary, paths.DICTIONARIES / "french_sorted.txt")
+
+            
     dictionnary_infos: dictionaries.Infos = dictionaries.dict_info(dictionnary_path)
+
 
     # Loading animations.
     loading_combinations: loadings.Spinner | None = None
@@ -69,7 +88,7 @@ def main_ui(
         print(f"{art.TAB}https://github.com/Detroix23/TrueAnagrams")
         print(f"{art.TAB}CC-BY 4.0")
         print()
-    print(f"{Style.OKCYAN}Using dictionnary: {Style.BOLD}{dictionnary_path}{Style.ENDC}")
+    print(f"{Style.OKCYAN}Using dictionnary: {Style.BOLD}{dictionnary_infos.path}{Style.ENDC}")
     print(f"{art.TAB}Words: {dictionnary_infos.entries}")
     print(f"{art.TAB}Is sorted: {dictionnary_infos.sort}")
 
@@ -119,7 +138,7 @@ def main_ui(
                     loading_intersect.reset()
 
     except KeyboardInterrupt:
-        print(f"\n{Style.ENDC}{Style.WARNING}(+) - User interrupt (Ctrl+C).{Style.ENDC}")
+        print(f"\n{Style.ENDC}{Style.WARNING}(+) - User interrupt (Ctrl+C).{Style.ENDC}\n")
 
 
 def set_to_table(

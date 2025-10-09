@@ -6,13 +6,18 @@ import sys
 
 import modules.ui as ui
 
-
 def main(args: list[str]) -> None:
+    """
+    Main entry point of the program. \n
+    Take a list `args`, the run arguments.
+    """
     # Default values
     error_args: list[str] = []
     loading_bars: bool = True
     ascii_art: bool = True
     credit_text: bool = True
+
+    dictionary_name = "fr_no-diac_22k.txt"
 
     # Check args
     for arg in args:
@@ -33,6 +38,7 @@ def main(args: list[str]) -> None:
         ascii_art,
         error_args,
         credit_text,
+        dictionary_name,
     )
 
 if __name__ == "__main__":

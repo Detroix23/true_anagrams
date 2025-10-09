@@ -92,19 +92,15 @@ def is_greater(a: str, b: str) -> bool:
     """
     Return True if a is after b in the dictionary.
     """
-    greatest: str = greater_word(
-            a, 
-            b
-        )
+    greatest: str = greater_word(a, b)
     
     return greatest == (a.lower() if IGNORE_CASE else a)
 
 
-def check(iterable: Union[list[str], tuple[str]]) -> bool:
+def check(iterable: Union[list[str], tuple[str]], *, raise_on_unsorted: bool = False) -> bool:
     """
     Verify that the given `iterable` is sorted alphabetically. \r
     """
-    raise_on_unsorted: bool = False
     sort: bool = True
     index: int = 0
     while sort and index < len(iterable) - 1:
@@ -112,13 +108,31 @@ def check(iterable: Union[list[str], tuple[str]]) -> bool:
             iterable[index + 1],
             iterable[index]
         )
-
         index += 1
 
     if not sort and raise_on_unsorted:
         raise StopIteration(f"{index}: {iterable[index - 1]} {iterable[index]}")
 
     return sort
+
+def sort(iterable: list[str]) -> None:
+    """
+    Sort, by reference, alphabetically an `iterable`. \r
+    Insertion sort starting from the end.
+    """
+    rank: int = len(iterable) - 1
+    word: str
+    while rank > 0:
+        word = iterable[rank - 1]
+        sub: int = 0
+        while is_greater(word, iterable[rank + sub]) and rank + sub < len(iterable) - 1:
+            iterable[rank + sub - 1] = iterable[rank + sub]
+            sub += 1
+        
+        iterable[rank + sub - 1] = word
+        rank -= 1
+
+
 
 
 def main() -> None:

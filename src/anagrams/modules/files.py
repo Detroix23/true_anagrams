@@ -2,7 +2,8 @@
 TRUE ANAGRAMS
 files.py
 """
-from typing import TextIO
+import pathlib
+from typing import TextIO, Iterable
 
 # Constants.
 
@@ -42,3 +43,13 @@ def load_into_list(file: TextIO) -> list[str]:
         l.append(line.rstrip())
 
     return l
+
+
+def write_list(iterable: Iterable[str], path: pathlib.Path) -> None:
+    """
+    Create a file from a given `iterable`.
+    """
+    with open(path, "w") as file:
+        file.write("# Generated from list. \n")
+        for line in iterable:
+            file.write(line + "\n")
