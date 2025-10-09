@@ -4,7 +4,6 @@ loadings.py
 Aim: loading bars and spinners like `alive_progress`, `tqdm`,...
 Utilize the \r escape operator
 """
-
 import time
 from enum import Enum
 

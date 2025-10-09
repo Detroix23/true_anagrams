@@ -2,10 +2,11 @@
 TRUE ANAGRAMS
 sorting.py
 """
+import numpy
 from typing import Union
 
 # Ords is a list of ASCII int code.
-ords = list[int]
+ords = numpy.ndarray
 
 # Ignore case.
 IGNORE_CASE: bool = True
@@ -17,11 +18,9 @@ def str_to_ords(word: str) -> ords:
     """
     Convert a string to a list of unicodes.
     """
-    ascii_chars: ords = []
-    for letter in (word.lower() if IGNORE_CASE else word):
-        ascii_chars.append(
-            ord(letter)
-        )
+    ascii_chars: ords = numpy.empty(shape=len(word), dtype=numpy.int8)
+    for index, letter in enumerate(word.lower() if IGNORE_CASE else word):
+        ascii_chars[index] = ord(letter)
     
     return ascii_chars
 
@@ -29,26 +28,21 @@ def ords_to_str(ascii_list: ords) -> str:
     """
     Convert a list of unicodes to a string.
     """
-    string: str = ""
-    for index in ascii_list:
-        if not 0 < index < 255:
-            raise ValueError(f"(X) - Non ASCII value {index}.")
-        string += chr(index)
-    
-    return string
+    return ''.join([chr(index) for index in ascii_list])
 
 def greater_char(a: str, b: str) -> str:
     """
     Return the the character that comes the last in the alphabet. \r
     It uses unicodes so can be used outside the alphabet.
     """
-    if len(a) != 1 or len(b) != 1:
-        raise ValueError(f"(X) - `a` and `b` must be 1 length str (a={repr(a)}, b={repr(b)})")
-
-    if ord(a) > ord(b):
-        return a
-    else:
-        return b
+    try:
+        if ord(a) > ord(b):
+            return a
+        else:
+            return b
+        
+    except TypeError:
+        raise TypeError(f"(X) - `a` and `b` must be 1 length str (a={repr(a)}, b={repr(b)})")
 
 def greater_word(a: str, b: str) -> str:
     """
@@ -68,22 +62,32 @@ def greater_ords(a: ords, b: ords) -> ords:
         - If all digits are the same, return the longest list \r
     """
     cursor: int = 0
-    for i_a, i_b in zip(a, b):
-        if i_a not in ALPHABET:
-            i_a = 255
-        if i_b not in ALPHABET:
-            i_b = 255
+    a_shaped: ords
+    b_shaped: ords
+    if a.size > b.size:
+        a_shaped = numpy.resize(a, b.size)
+        b_shaped = b
+    elif a.size < b.size:
+        a_shaped = a
+        b_shaped = numpy.resize(b, a.size)
+    else:
+        a_shaped = a
+        b_shaped = b
+
+    for r in numpy.column_stack((a_shaped, b_shaped)):
+        a_i: int = r[0] if r[0] in ALPHABET else 255
+        b_i: int = r[1] if r[1] in ALPHABET else 255
         
-        if i_a > i_b:
-            # print(f"a: {cursor}, {a=}, {b=}")
+        if a_i > b_i:
+            #print(f"a: {cursor} {r[0]}, {a=}, {b=}")
             return a
-        elif i_b > i_a:
-            # print(f"b: {cursor}, {a=}, {b=}")
+        elif b_i > a_i:
+            #print(f"b: {cursor} {r[0]}, {a=}, {b=}")
             return b
 
         cursor += 1
 
-    if len(a) < len(b):
+    if a.size < b.size:
         return b
     else:
         return a

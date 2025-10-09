@@ -1,7 +1,7 @@
 [project]
-name = "new_detroix23"
-version = "0.0.1"
-description = "New project."
+name = "true_anagrams_detroix23"
+version = "0.0.3"
+description = "Find anagrams, and if they exist in the dictionary."
 authors = [
     { name="Detroix23", email="detroix23@gmail.com" }
 ]
@@ -13,6 +13,7 @@ classifiers = [
     "Natural Language :: English",
 ]
 dependencies = [
+    "numpy"
 ]
 license = "CC-BY-4.0"
 license-files = [

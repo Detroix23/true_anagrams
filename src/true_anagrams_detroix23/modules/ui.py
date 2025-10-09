@@ -48,7 +48,7 @@ def main_ui(
             print("Not sorted.")
             print("SORTING A NEW")
             sorting.sort(dictionary)
-            sorting.check(dictionary, raise_on_unsorted=False)
+            sorting.check(dictionary, raise_on_unsorted=True)
             print("WRITING A NEW")
             files.write_list(dictionary, paths.DICTIONARIES / "french_sorted.txt")
 
