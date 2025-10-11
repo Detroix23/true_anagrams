@@ -5,12 +5,11 @@ ui.py
 import sys
 
 import modules.paths as paths
-import modules.files as files
-import modules.sorting as sorting
 import modules.anagrams as anagrams
 import modules.dictionaries as dictionaries
 import modules.loadings as loadings
 import modules.art as art
+import modules.preparations as preparation
 
 ESC: str = "\033"
 
@@ -38,23 +37,14 @@ def main_ui(
     """
     # Initialization.
     dictionnary_path: paths.Path = paths.DICTIONARIES / dictionary_name
+    if not dictionnary_path.is_file():
+        raise FileNotFoundError(f"(X) - Dictionary in {dictionnary_path} does not exist.\n")
 
-    # Sorting.
-    dictionnary_sort: bool
-    with open(dictionnary_path, "r") as file:
-        dictionary: list[str] = files.load_into_list(file)
-        dictionnary_sort = sorting.check(dictionary)
-        if not dictionnary_sort:
-            print("Not sorted.")
-            print("SORTING A NEW")
-            sorting.sort(dictionary)
-            sorting.check(dictionary, raise_on_unsorted=True)
-            print("WRITING A NEW")
-            files.write_list(dictionary, paths.DICTIONARIES / "french_sorted.txt")
+    # Preparations.
+    preparation.dictionary(dictionnary_path, dictionary_name + "_prepared")
 
-            
+    # Informations.
     dictionnary_infos: dictionaries.Infos = dictionaries.dict_info(dictionnary_path)
-
 
     # Loading animations.
     loading_combinations: loadings.Spinner | None = None
@@ -73,16 +63,17 @@ def main_ui(
 
 
     # Main
+    if ascii_art:
+        print(art.TITLE)
+    else:
+        print("\n# True Anagrams.\n")
+
     if error_args:
         print(f"{Style.FAIL}(!) - Some invalid arguments:", end=" ")
         for arg in error_args:
             print(f"`{arg}`", end=" ")
         print(f"{Style.ENDC}")
 
-    if ascii_art:
-        print(art.TITLE)
-    else:
-        print("\n# True Anagrams.\n")
     if credit_text:
         print(f"{Style.HEADER}By Detroix23, 2025.{Style.ENDC}")
         print(f"{art.TAB}https://github.com/Detroix23/TrueAnagrams")

@@ -24,11 +24,38 @@ def str_to_ords(word: str) -> ords:
     
     return ascii_chars
 
+def str_to_int(word: str, base: int = 27) -> int:
+    """
+    Use a `base` to convert a word. \r
+    Return base-10 positive int. \n
+    Digits: \r
+        0 = Non alphabetic character.
+        ! = A
+        26 = Z
+    """
+    number: int = 0
+    for index, char in enumerate(word):
+        number += ((ord(char) - 96) * (base ** (len(word) - index - 1))) if 96 < ord(char) and ord(char) < 123 else 0 
+
+    return number
+
 def ords_to_str(ascii_list: ords) -> str:
     """
     Convert a list of unicodes to a string.
     """
     return ''.join([chr(index) for index in ascii_list])
+
+def int_to_str(number: int, base: int = 27) -> str:
+    """
+    Convert a base-`base` number into a string. 
+    """
+    chars: list[str] = list()
+    while number > 0:
+        chars.insert(0, chr(number % base + 96))
+        number //= base
+    
+    return "".join(chars)
+
 
 def greater_char(a: str, b: str) -> str:
     """
@@ -47,15 +74,34 @@ def greater_char(a: str, b: str) -> str:
 def greater_word(a: str, b: str) -> str:
     """
     Return the word that comes the last in the dictionary.
+    Alias for the selected method.
+    """
+    return _greater_word_int(a, b)
+
+def _greater_word_ords(a: str, b: str) -> str:  # pyright: ignore[reportUnusedFunction]
+    """
+    Return the word that comes the last in the dictionary.
+    Using `ords`.
     """
     return ords_to_str(
-        greater_ords(
+        _greater_ords(
             str_to_ords(a), 
             str_to_ords(b)
         )
     )
 
-def greater_ords(a: ords, b: ords) -> ords:
+def _greater_word_int(a: str, b: str) -> str:
+    """
+    Return the word that comes the last in the dictionary.
+    Using `int` comparison.
+    """
+    if str_to_int(a) > str_to_int(b):
+        return a
+    else:
+        return b
+
+
+def _greater_ords(a: ords, b: ords) -> ords:
     """
     Return the unicode list that has the biggest digits. \r
         - If a `i-digit` is bigger that the other list, return the list \r
@@ -136,19 +182,55 @@ def sort(iterable: list[str]) -> None:
         iterable[rank + sub - 1] = word
         rank -= 1
 
+def equalize_word_length(iterable: list[str], name: str = "equalized.txt", fill: str = "`") -> None:
+    """
+    Write a file where all words are of the same size. \r
+    Find the maximum and complete with `fill`.
+    """
+    # Maximum.
+    maximum: int = 0
+    for word in iterable:
+        if len(word) > maximum:
+            maximum = len(word)
 
+    for index, word in enumerate(iterable):
+        delta: int = maximum - len(word) + 1
+        iterable[index] = (word + (fill * delta))
+
+    return
 
 
 def main() -> None:
     """
     Main test entry point.
     """
-    print(ords_to_str(greater_ords(str_to_ords("abc"), str_to_ords("aaa"))))
-    print(ords_to_str(greater_ords(str_to_ords("aaa"), str_to_ords("aaa"))))
-    print(ords_to_str(greater_ords(str_to_ords("aaa"), str_to_ords("abc"))))
-    print(ords_to_str(greater_ords(str_to_ords("uui"), str_to_ords("uua"))))
+    print("## Comparisons (ords).")
+    assert(ords_to_str(_greater_ords(str_to_ords("abc"), str_to_ords("aaa"))) == "abc")
+    assert(greater_word("aaa", "aaa") == "aaa")
+    assert(greater_word("aaa", "abc") == "abc")
+    assert(greater_word("uui", "uua") == "uui")
+    assert(greater_word("uui", "auiasdasdasd") == "uui")
+    assert(greater_word("uui", "zuiasdasdasd") == "zuiasdasdasd")
+
     
     print(greater_word("apprehension", "abaisse"))
+
+    print("## Str to int.")
+    print(str_to_int("a"))
+    print(str_to_int("b"))
+    print(str_to_int("ac"))
+    print(str_to_int("ad"))
+    print(str_to_int("ad "))
+    print(str_to_int("ad*"))
+    print(str_to_int("abc"))
+    print(str_to_int("abz"))
+
+    print(int_to_str(str_to_int("ad*")))
+    print(int_to_str(str_to_int("adasd*")))
+    print(int_to_str(str_to_int("ad*adsaf")))
+    print(int_to_str(str_to_int("zzzzzzzzzzzzzzaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbb")))
+    
+
 
 if __name__ == "__main__":
     main()

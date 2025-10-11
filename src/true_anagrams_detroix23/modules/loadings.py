@@ -6,6 +6,7 @@ Utilize the \r escape operator
 """
 import time
 from enum import Enum
+from typing import Union
 
 class State(Enum):
     READY = 0
@@ -115,7 +116,7 @@ class Bar(Animation):
 class Spinner(Animation):
     def __init__(
         self, 
-        symbols: list[str] | str, 
+        symbols: Union[list[str], str], 
         max: int = 0,
         *, span: int = 1, 
         multiple: int = 1,
@@ -131,7 +132,7 @@ class Spinner(Animation):
         self.max: int = max
         self.multiple: int = multiple
         
-        self.symbols: list[str] | str = symbols
+        self.symbols: Union[list[str], str] = symbols
         self.borders: str = borders
         self.prefix: str = prefix
         self.suffix: str = suffix
@@ -143,7 +144,7 @@ class Spinner(Animation):
         self.counters: dict[str, int] = {counter: 0 for counter in more_counters}
         self.per_second: bool = more_per_second
 
-    def more_counters(self, more_counters: list[str] | str) -> None:
+    def more_counters(self, more_counters: Union[list[str], str]) -> None:
         """
         Define more counter, after initialization.
         """

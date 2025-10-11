@@ -3,6 +3,7 @@ ANAGRAMS
 dictionnaries.py
 """
 from pathlib import Path
+from typing import Optional
 
 import modules.files as files
 import modules.sorting as sorting
@@ -46,7 +47,7 @@ def dict_info(dict_path: Path) -> Infos:
 def in_dict(
     word: str, 
     dictionnary_path: Path,
-    loading_animation: loadings.Spinner | None = None
+    loading_animation: Optional[loadings.Spinner] = None
 ) -> bool:
     """
     Search using dichotomy a word.
@@ -69,7 +70,7 @@ def in_dict(
         dictionnary: list[str], 
         bound_start: int, 
         bound_end: int,
-        loading_animation: loadings.Spinner | None = None
+        loading_animation: Optional[loadings.Spinner] = None
     ) -> bool:
         if loading_animation is not None:
             loading_animation.increment()
@@ -109,7 +110,7 @@ def intersect(
     words: set[str], 
     dictionnary_path: Path, 
     blacklist: set[str] = set(),
-    loading_animation: loadings.Spinner | None = None,
+    loading_animation: Optional[loadings.Spinner] = None,
 ) -> set[str]:
     """
     Use the `in_dict` function on a set to filter words.
