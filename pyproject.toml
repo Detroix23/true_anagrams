@@ -1,6 +1,6 @@
 [project]
 name = "true_anagrams_detroix23"
-version = "0.0.3"
+version = "0.1.0"
 description = "Find anagrams, and if they exist in the dictionary."
 authors = [
     { name="Detroix23", email="detroix23@gmail.com" }
