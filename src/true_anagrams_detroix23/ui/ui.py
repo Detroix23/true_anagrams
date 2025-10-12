@@ -9,6 +9,7 @@ import modules.paths as paths
 import modules.anagrams as anagrams
 import modules.dictionaries as dictionaries
 import modules.preparations as preparation
+import ui.cli
 import ui.loadings as loadings
 import ui.art as art
 
@@ -94,10 +95,17 @@ def main_ui(
         print(f"{art.BORDER3}")
 
     try:
+        prompt: str = "- Enter a word: "
+
         while True:
-            user_word: str = input(f"- Enter a word: {Style.BOLD}")
-            print(f"{Style.ENDC}", end="")
+            user_word: str = input(prompt + Style.BOLD)
+            print(Style.ENDC, end="")
             
+            ui.cli.move_up(1)
+            ui.cli.clear_to_bottom()
+            print(prompt + Style.BOLD + Style.OKCYAN + user_word + Style.ENDC)
+
+
             if user_word == "":
                 # Move up.
                 sys.stdout.write(ESC + "[1A")
