@@ -8,6 +8,7 @@ from typing import Optional
 import modules.files as files
 import modules.sorting as sorting
 import modules.loadings as loadings
+import debug.logs as logs
 
 class Infos:
     """
@@ -16,11 +17,13 @@ class Infos:
     entries: int
     sort: bool
     path: str
+    word_length: int
 
-    def __init__(self, entries: int, sort: bool, path: str) -> None:
+    def __init__(self, entries: int, sort: bool, path: str, word_length: int) -> None:
         self.entries = entries
         self.sort = sort
         self.path = path
+        self.word_length = word_length
 
     def __repr__(self) -> str:
         return f"Infos(entries: {self.entries}, sort: {self.sort})"
@@ -40,12 +43,14 @@ def dict_info(dict_path: Path) -> Infos:
     return Infos(
         len(lines),
         is_sorted,
-        str(dict_path)
+        str(dict_path),
+        len(lines[0])
     )
 
 
 def in_dict(
-    word: str, 
+    word: str,
+    length: int,
     dictionnary_path: Path,
     loading_animation: Optional[loadings.Spinner] = None
 ) -> bool:
@@ -82,32 +87,37 @@ def in_dict(
         if bound_start > bound_end:
             return False
         mid: int = (bound_start + bound_end) // 2
-        mid_value: str
+        mid_value: str = dictionnary[mid]
         if ignore_case:
             mid_value = dictionnary[mid].lower()
-        else:
-            mid_value = dictionnary[mid]
+            
+        # logs.dbg(f"{word} {len(word)} {sorting.str_to_int(word)}, {mid_value} {len(mid_value)} {sorting.str_to_int(mid_value)}")
 
         # Dichotomy.
-        if mid_value == word:
+        if sorting.str_to_int(mid_value) == sorting.str_to_int(word):
             return True
         
-        greater: str = sorting.greater_word(mid_value, word)
         #print(f"{mid_value}, {word}: {greater}")
-        if greater == mid_value:
+        if sorting.is_greater(mid_value, word):
             return in_dict_body(word, dictionnary, bound_start, mid - 1, loading_animation)
-        return in_dict_body(word, dictionnary, mid + 1, bound_end, loading_animation)
+        else:
+            return in_dict_body(word, dictionnary, mid + 1, bound_end, loading_animation)
     
     if not word:
         return False
     
+    if len(word) < length:
+        delta: int = length - len(word)
+        word = word + "`" * delta
+
     with open(dictionnary_path, "r") as file:
         words: list[str] = files.load_into_list(file)
         result: bool = in_dict_body(word, words, 0, len(words) - 1, loading_animation)
         return result
     
 def intersect(
-    words: set[str], 
+    words: set[str],
+    length: int,
     dictionnary_path: Path, 
     blacklist: set[str] = set(),
     loading_animation: Optional[loadings.Spinner] = None,
@@ -118,7 +128,7 @@ def intersect(
     filtered: list[str] = []
 
     for word in words:
-        if in_dict(word, dictionnary_path, loading_animation) and word not in blacklist:
+        if in_dict(word, length, dictionnary_path, loading_animation) and word not in blacklist:
             filtered.append(word)
         if loading_animation is not None:
             loading_animation.counters["words"] += 1
@@ -132,11 +142,14 @@ def intersect(
 
 
 if __name__ == "__main__":
-    print("# DICTIONNARIES")
-    
     import paths
+    
+    print("# DICTIONNARIES")
 
-    print("abaisse: ", in_dict("abaisse", paths.DICTIONARIES / "fr_no-diac_22k.txt"))
-    print("kqldsflkqsdjf: ", in_dict("kqldsflkqsdjf", paths.DICTIONARIES / "fr_no-diac_22k.txt"))
-    print("zebre: ", in_dict("zebre", paths.DICTIONARIES / "fr_no-diac_22k.txt"))
-    print("<EMPTY>: ", in_dict("", paths.DICTIONARIES / "fr_no-diac_22k.txt"))
+    path: Path = paths.DICTIONARIES / "default"
+    infos: Infos = dict_info(path)
+
+    print("abaisse: ", in_dict("abaisse", infos.word_length, path))
+    print("kqldsflkqsdjf: ", in_dict("kqldsflkqsdjf", infos.word_length, path))
+    print("zebre: ", in_dict("zebre", infos.word_length, path))
+    print("<EMPTY>: ", in_dict("", infos.word_length, path))

@@ -30,7 +30,8 @@ def main_ui(
     ascii_art: bool,
     error_args: list[str],
     credit_text: bool,
-    dictionary_name: str
+    dictionary_name: str,
+    prepare_dictionary: bool,
 ) -> None:
     """
     Main function execute on run.
@@ -41,7 +42,10 @@ def main_ui(
         raise FileNotFoundError(f"(X) - Dictionary in {dictionnary_path} does not exist.\n")
 
     # Preparations.
-    preparation.dictionary(dictionnary_path, dictionary_name + "_prepared")
+    if prepare_dictionary:
+        preparation_tag: str = "_prepared"
+        preparation.dictionary(dictionnary_path, dictionary_name + preparation_tag)
+        dictionnary_path = paths.DICTIONARIES / (dictionary_name + preparation_tag)
 
     # Informations.
     dictionnary_infos: dictionaries.Infos = dictionaries.dict_info(dictionnary_path)
@@ -82,6 +86,8 @@ def main_ui(
     print(f"{Style.OKCYAN}Using dictionnary: {Style.BOLD}{dictionnary_infos.path}{Style.ENDC}")
     print(f"{art.TAB}Words: {dictionnary_infos.entries}")
     print(f"{art.TAB}Is sorted: {dictionnary_infos.sort}")
+    print(f"{art.TAB}Word length: {dictionnary_infos.word_length}")
+
 
     if ascii_art:
         print(f"{art.BORDER3}")
@@ -107,7 +113,8 @@ def main_ui(
                 print(f"Found {len(user_anagrams)} anagrams.")
                 
                 matching_anagrams: set[str] = dictionaries.intersect(
-                    user_anagrams, 
+                    user_anagrams,
+                    dictionnary_infos.word_length,
                     dictionnary_path,
                     blacklist={user_word},
                     loading_animation=loading_intersect,

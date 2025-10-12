@@ -1,47 +1,42 @@
 """
 TRUE ANAGRAMS
-tests.py
+benchmark.py
 """
 import time
 
 import modules.sorting as sorting
 
-def tests() -> None:
-    """
-    Entry point to general test in-dev features.
-    """
-    print("# True Anagrams.")
-    print("## TESTING.")
-    
-    sorting.main()
-
-
-def benchmark() -> None:
+def benchmark() -> list[float]:
     """
     Benchmark.
     """
     print("# True Anagrams.")
     print("## BENCHMARKING.")
 
-    repetitions: int = 100000
+    repetitions: int = 1000000
     print(f"For {repetitions} repetitions.")
 
     time_int: float = time.monotonic()
     for _ in range(repetitions):
-        sorting._greater_word_int("abcdefghijk", "zyx")
+        sorting._greater_word_int("abcdefghijk", "zyx")     # pyright: ignore[reportPrivateUsage]
     
     time_int = time.monotonic() - time_int
 
     time_ords: float = time.monotonic()
     for _ in range(repetitions):
-        sorting._greater_word_ords("abcdefghijk", "zyx")
+        sorting._greater_word_ords("abcdefghijk", "zyx")    # pyright: ignore[reportPrivateUsage]
     
     time_ords = time.monotonic() - time_ords
 
     print(f"Int: {time_int:.2f}s")
     print(f"Ords: {time_ords:.2f}s")
 
+    return [time_int, time_ords]
 
 
+def main() -> None:
+    benchmark()
 
+if __name__ == "__main__":
+    main()
 

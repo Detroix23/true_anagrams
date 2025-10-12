@@ -161,24 +161,48 @@ def check(iterable: Union[list[str], tuple[str]], *, raise_on_unsorted: bool = F
         index += 1
 
     if not sort and raise_on_unsorted:
-        raise StopIteration(f"{index}: {iterable[index - 1]} {iterable[index]}")
+        raise StopIteration(f"""
+{index}: {iterable[index - 1]} {iterable[index]}
+{str_to_int(iterable[index - 1])} 
+{str_to_int(iterable[index])}
+""")
 
     return sort
 
-def sort(iterable: list[str]) -> None:
+def sort(iterable: list[str], raise_unsorted: bool = False) -> None:
     """
     Sort, by reference, alphabetically an `iterable`. \r
     Insertion sort starting from the end.
     """
     rank: int = len(iterable) - 1
+    sub: int
     word: str
+    sub_word: str
     while rank > 0:
+        sub = 0
         word = iterable[rank - 1]
-        sub: int = 0
-        while is_greater(word, iterable[rank + sub]) and rank + sub < len(iterable) - 1:
-            iterable[rank + sub - 1] = iterable[rank + sub]
+        sub_word = iterable[rank + sub]
+        if IGNORE_CASE:
+            word = word.lower()
+            sub_word = sub_word.lower()
+
+        if is_greater(word, sub_word):
+            # print()
+            if raise_unsorted:
+                raise StopIteration(f"""
+Not sorted on rank: {rank}, word: {word}, sub: {sub_word}.
+Ints: word: {str_to_int(word)}, sub: {str_to_int(sub_word)}
+""")
+
+        while is_greater(word, sub_word) and rank + sub < len(iterable) - 1:
+            # print(f"! rank: {rank}, sub: {sub}, word: {word}, sub_word: {sub_word}")
+            iterable[rank + sub - 1] = sub_word
             sub += 1
+            sub_word = iterable[rank + sub]
+            if IGNORE_CASE:
+                sub_word = sub_word.lower()
         
+
         iterable[rank + sub - 1] = word
         rank -= 1
 
@@ -209,8 +233,10 @@ def main() -> None:
     assert(greater_word("aaa", "aaa") == "aaa")
     assert(greater_word("aaa", "abc") == "abc")
     assert(greater_word("uui", "uua") == "uui")
-    assert(greater_word("uui", "auiasdasdasd") == "uui")
-    assert(greater_word("uui", "zuiasdasdasd") == "zuiasdasdasd")
+    assert(greater_word("uui*********", "auiasdasdasd") == "uui*********")
+    assert(greater_word("uui*********", "zuiasdasdasd") == "zuiasdasdasd")
+    assert(greater_word("uui***********", "zuiasdasdasd**") == "zuiasdasdasd**")
+
 
     
     print(greater_word("apprehension", "abaisse"))

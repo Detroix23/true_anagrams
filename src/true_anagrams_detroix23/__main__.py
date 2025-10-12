@@ -6,7 +6,8 @@ import sys
 import enum
 
 import modules.ui as ui
-import modules.tests as tests
+import debug.tests as tests
+import debug.benchmark as benchmark
 
 class RunMode(enum.Enum):
     MAIN = 0
@@ -25,11 +26,17 @@ def main(args: list[str]) -> None:
     ascii_art: bool = True
     credit_text: bool = True
     mode: RunMode = RunMode.MAIN
+    prepare_dictionary: bool = True
 
-    dictionary_name = "fr_no-diac_22k"
+    dictionary_name: str = "default"
 
     # Check args
-    for arg in args:
+    index: int = 0
+    while index < len(args) - 1:
+        arg: str = args[index]
+
+        if arg == "-n":
+            dictionary_name = args[index + 1]
         if arg == "--noloading":
             loading_bars = False
         elif arg == "--noascii":
@@ -39,18 +46,21 @@ def main(args: list[str]) -> None:
         elif arg in {"-c", "--nocontext"}:
             credit_text = False
             ascii_art = False
-        elif arg == "--test":
+        elif arg in {"--test", "-t"}:
             mode = RunMode.TEST
         elif arg in  {"--bench", "-b"}:
             mode = RunMode.BENCHMARK
+        elif arg == "--noprep":
+            prepare_dictionary = False
         else:
             error_args.append(arg)
 
+        index += 1
 
     if mode == RunMode.TEST:
         tests.tests()
     elif mode == RunMode.BENCHMARK:
-        tests.benchmark()
+        benchmark.benchmark()
     else:
         ui.main_ui(
             loading_bars,
@@ -58,6 +68,7 @@ def main(args: list[str]) -> None:
             error_args,
             credit_text,
             dictionary_name,
+            prepare_dictionary
         )
 
 
