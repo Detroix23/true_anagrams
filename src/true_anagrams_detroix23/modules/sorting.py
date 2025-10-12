@@ -2,27 +2,13 @@
 TRUE ANAGRAMS
 sorting.py
 """
-import numpy
 from typing import Union
-
-# Ords is a list of ASCII int code.
-ords = numpy.ndarray
 
 # Ignore case.
 IGNORE_CASE: bool = True
 
 # Alphabetic range
 ALPHABET: set[int] = set(range(97, 123))
-
-def str_to_ords(word: str) -> ords:
-    """
-    Convert a string to a list of unicodes.
-    """
-    ascii_chars: ords = numpy.empty(shape=len(word), dtype=numpy.int8)
-    for index, letter in enumerate(word.lower() if IGNORE_CASE else word):
-        ascii_chars[index] = ord(letter)
-    
-    return ascii_chars
 
 def str_to_int(word: str, base: int = 27) -> int:
     """
@@ -38,12 +24,6 @@ def str_to_int(word: str, base: int = 27) -> int:
         number += ((ord(char) - 96) * (base ** (len(word) - index - 1))) if 96 < ord(char) and ord(char) < 123 else 0 
 
     return number
-
-def ords_to_str(ascii_list: ords) -> str:
-    """
-    Convert a list of unicodes to a string.
-    """
-    return ''.join([chr(index) for index in ascii_list])
 
 def int_to_str(number: int, base: int = 27) -> str:
     """
@@ -78,18 +58,6 @@ def greater_word(a: str, b: str) -> str:
     """
     return _greater_word_int(a, b)
 
-def _greater_word_ords(a: str, b: str) -> str:  # pyright: ignore[reportUnusedFunction]
-    """
-    Return the word that comes the last in the dictionary.
-    Using `ords`.
-    """
-    return ords_to_str(
-        _greater_ords(
-            str_to_ords(a), 
-            str_to_ords(b)
-        )
-    )
-
 def _greater_word_int(a: str, b: str) -> str:
     """
     Return the word that comes the last in the dictionary.
@@ -99,44 +67,6 @@ def _greater_word_int(a: str, b: str) -> str:
         return a
     else:
         return b
-
-
-def _greater_ords(a: ords, b: ords) -> ords:
-    """
-    Return the unicode list that has the biggest digits. \r
-        - If a `i-digit` is bigger that the other list, return the list \r
-        - If all digits are the same, return the longest list \r
-    """
-    cursor: int = 0
-    a_shaped: ords
-    b_shaped: ords
-    if a.size > b.size:
-        a_shaped = numpy.resize(a, b.size)
-        b_shaped = b
-    elif a.size < b.size:
-        a_shaped = a
-        b_shaped = numpy.resize(b, a.size)
-    else:
-        a_shaped = a
-        b_shaped = b
-
-    for r in numpy.column_stack((a_shaped, b_shaped)):
-        a_i: int = r[0] if r[0] in ALPHABET else 255
-        b_i: int = r[1] if r[1] in ALPHABET else 255
-        
-        if a_i > b_i:
-            #print(f"a: {cursor} {r[0]}, {a=}, {b=}")
-            return a
-        elif b_i > a_i:
-            #print(f"b: {cursor} {r[0]}, {a=}, {b=}")
-            return b
-
-        cursor += 1
-
-    if a.size < b.size:
-        return b
-    else:
-        return a
 
 def is_greater(a: str, b: str) -> bool:
     """
@@ -229,7 +159,6 @@ def main() -> None:
     Main test entry point.
     """
     print("## Comparisons (ords).")
-    assert(ords_to_str(_greater_ords(str_to_ords("abc"), str_to_ords("aaa"))) == "abc")
     assert(greater_word("aaa", "aaa") == "aaa")
     assert(greater_word("aaa", "abc") == "abc")
     assert(greater_word("uui", "uua") == "uui")
