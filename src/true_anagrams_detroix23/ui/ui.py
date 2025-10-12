@@ -8,8 +8,8 @@ import pathlib
 import modules.paths as paths
 import modules.anagrams as anagrams
 import modules.dictionaries as dictionaries
-import modules.loadings as loadings
 import modules.preparations as preparation
+import ui.loadings as loadings
 import ui.art as art
 
 ESC: str = "\033"

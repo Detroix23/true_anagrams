@@ -5,6 +5,7 @@ Aim: loading bars and spinners like `alive_progress`, `tqdm`,...
 Utilize the \r escape operator
 """
 import time
+import sys
 from enum import Enum
 from typing import Union
 
@@ -80,28 +81,31 @@ class Bar(Animation):
         else:
             bar = self.progress_bar_symbol * self.max
 
-        template: str = "\r"
+        template: list[str] = ["\r"]
 
-        template += self.prefix
-        template += self.borders
-        template += bar
-        template += self.borders
-        template += " - "
+        # Bar.
+        template.append(self.prefix)
+        template.append(self.borders)
+        template.append(bar)
+        template.append(self.borders)
+        template.append(" - ")
 
+        # Percentage.
         percentage: float = self._i / self.max * 100
-        template += f"{percentage:.1f}% "
-        template += f"{self._i}/{self.max}ops "
+        template.append(f"{percentage:.1f}% ")
+        template.append(f"{self._i}/{self.max}ops ")
 
+        # Time.
         time_elapsed: float = time.monotonic() - self.first_time
-        template += f"{time_elapsed:.2f}s "
+        template.append(f"{time_elapsed:.2f}s ")
 
-        template += self.suffix
+        # Suffix.
+        template.append(self.suffix)
+        template.append("\r")
 
-        print(
-            template,
-            end="\r"
-        )
-    
+        sys.stdout.write(''.join(template))
+        sys.stdout.flush()
+
     def finish(self) -> None:
         """
         Allow to prematurly and ensure the bar to complete.
@@ -180,44 +184,44 @@ class Spinner(Animation):
         
         time_elapsed: float = time.monotonic() - self.first_time
 
-        template: str = "\r"
+        template: list[str] = ["\r"]
 
         # Drawing
-        template += self.prefix
-        template += self.borders
+        template.append(self.prefix)
+        template.append(self.borders)
         if self.state == State.FINISHED:
-            template += f"{self.finish_character * self.span}"
+            template.append(f"{self.finish_character * self.span}")
         elif self.state == State.READY:
-            template += f"{self.ready_character * self.span}"
+            template.append(f"{self.ready_character * self.span}")
         else:
-            template += spinner
-        template += self.borders
-        template += " - "
+            template.append(spinner)
+        template.append(self.borders)
+        template.append(" - ")
 
         # Main counter
         if self.max != 0:
             percentage: float = self._i / self.max * 100
-            template += f"{percentage:.1f}% "
-            template += f"{self._i}/{self.max}ops "
+            template.append(f"{percentage:.1f}% ")
+            template.append(f"{self._i}/{self.max}ops ")
         else:
-            template += f"{self._i}ops "
+            template.append(f"{self._i}ops ")
 
         # Custom counters
         if self.counters:
             for name, count in self.counters.items():
-                template += f"{name}: {count} "
+                template.append(f"{name}: {count} ")
                 if time_elapsed != 0 and self.per_second:
-                    template += f"{count / time_elapsed:.1f}/s "
+                    template.append(f"{count / time_elapsed:.1f}/s ")
 
         # Time counter
-        template += f"{time_elapsed:.2f}s "
+        template.append(f"{time_elapsed:.2f}s ")
+        
+        # Suffix
+        template.append(self.suffix)
+        template.append("\r")
 
-        template += self.suffix
-
-        print(
-            template,
-            end="\r"
-        )
+        sys.stdout.write("".join(template))
+        sys.stdout.flush()
     
     def __copy__(self) -> 'Spinner':
         copied: 'Spinner' = Spinner(

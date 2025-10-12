@@ -2,7 +2,7 @@
 ANAGRAMS
 anagrams.py
 """
-import modules.loadings as loadings
+import ui.loadings as loadings
 from typing import Optional
 
 def slide(anagram: str, letter: str, k: int) -> str:

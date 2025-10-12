@@ -7,7 +7,7 @@ from typing import Optional
 
 import modules.files as files
 import modules.sorting as sorting
-import modules.loadings as loadings
+import ui.loadings as loadings
 import debug.logs as logs
 
 class Infos:
