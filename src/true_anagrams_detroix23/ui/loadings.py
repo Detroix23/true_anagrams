@@ -205,6 +205,9 @@ class Spinner(Animation):
             template.append(f"{self._i}/{self.max}ops ")
         else:
             template.append(f"{self._i}ops ")
+        
+        if self.per_second and time_elapsed > 0:
+            template.append(f"{self._i / time_elapsed:.2f}/ s ")
 
         # Custom counters
         if self.counters:
@@ -212,6 +215,8 @@ class Spinner(Animation):
                 template.append(f"{name}: {count} ")
                 if time_elapsed != 0 and self.per_second:
                     template.append(f"{count / time_elapsed:.1f}/s ")
+                elif self.per_second:
+                    template.append(f"∞/s ")
 
         # Time counter
         template.append(f"{time_elapsed:.2f}s ")

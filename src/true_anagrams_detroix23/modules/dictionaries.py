@@ -2,6 +2,8 @@
 ANAGRAMS
 dictionnaries.py
 """
+import concurrent.futures
+import time
 from pathlib import Path
 from typing import Optional
 
@@ -78,11 +80,7 @@ def in_dict(
         dictionnary: list[str], 
         bound_start: int, 
         bound_end: int,
-        loading_animation: Optional[loadings.Spinner] = None
     ) -> bool:
-        if loading_animation is not None:
-            loading_animation.increment()
-
         if ignore_case:
             word = word.lower()
 
@@ -102,20 +100,21 @@ def in_dict(
         
         #print(f"{mid_value}, {word}: {greater}")
         if sorting.is_greater(mid_value, word):
-            return in_dict_body(word, dictionnary, bound_start, mid - 1, loading_animation)
+            return in_dict_body(word, dictionnary, bound_start, mid - 1)
         else:
-            return in_dict_body(word, dictionnary, mid + 1, bound_end, loading_animation)
+            return in_dict_body(word, dictionnary, mid + 1, bound_end)
     
     if not word:
         return False
     
+    # Equalize length. Crucial, between `int` comparison.
     if len(word) < length:
         delta: int = length - len(word)
         word = word + "`" * delta
 
     with open(dictionnary_path, "r") as file:
         words: list[str] = files.load_into_list(file)
-        result: bool = in_dict_body(word, words, 0, len(words) - 1, loading_animation)
+        result: bool = in_dict_body(word, words, 0, len(words) - 1)
         return result
     
 def intersect(
@@ -126,22 +125,93 @@ def intersect(
     loading_animation: Optional[loadings.Spinner] = None,
 ) -> set[str]:
     """
-    Use the `in_dict` function on a set to filter words.
+    Use the `in_dict` function on a set to filter words. \r
+    Implemented with multiprocessing.
+    """
+    # Required for multiprocessing.
+    global call
+
+    filtered: list[str] = []
+
+    def call(word_in: str) -> Optional[str]:
+        """
+        Calls `in_dict` and search a given word.
+        """
+        result: Optional[str] = None
+
+        if in_dict(word_in, length, dictionnary_path, loading_animation) and word_in not in blacklist:
+            result = word_in
+
+        return result
+
+    time_elapsed: float = time.perf_counter()
+
+    # Asyncronous loop.
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        for result in executor.map(call, words):
+            try:
+                logs.dbg(f"! {result} {type(result)}.")
+                
+                if loading_animation is not None:
+                    loading_animation.increment()
+                
+                if result:
+                    filtered.append(result)
+
+            except Exception as exception:
+                logs.dbg(f"! {exception}")
+
+
+    time_elapsed = time.perf_counter() - time_elapsed
+
+    if loading_animation is not None:
+        loading_animation.finish()
+    
+    print("")
+    print(f"Time for `intersect`: {time_elapsed:.2f}s, average: {len(words)/time_elapsed:.2f}words/ s")
+    return set(filtered)
+
+
+def intersect_sync(
+    words: set[str],
+    length: int,
+    dictionnary_path: Path, 
+    blacklist: set[str] = set(),
+    loading_animation: Optional[loadings.Spinner] = None,
+) -> set[str]:
+    """
+    Use the `in_dict` function on a set to filter words. \r
+    Uses a classic syncronous loop. \r
     """
     filtered: list[str] = []
 
+    def call(word_in: str) -> Optional[str]:
+        """
+        Calls `in_dict` and search a given word.
+        """
+        result: Optional[str] = None
+
+        if in_dict(word_in, length, dictionnary_path, loading_animation) and word_in not in blacklist:
+            result = word_in
+
+        return result
+
+    time_elapsed: float = time.perf_counter()
+
+    # Syncronous loop.
     for word in words:
-        if in_dict(word, length, dictionnary_path, loading_animation) and word not in blacklist:
-            filtered.append(word)
-        if loading_animation is not None:
-            loading_animation.counters["words"] += 1
-    
-        
+        result: Optional[str] = call(word)
+        if result:
+            filtered.append(result)
+
+    time_elapsed = time.perf_counter() - time_elapsed
+
     if loading_animation is not None:
         loading_animation.finish()
+    
     print("")
+    print(f"Time for `intersect`: {time_elapsed:.2f}s, average: {len(words)/time_elapsed:.2f}words/ s")
     return set(filtered)
-
 
 
 if __name__ == "__main__":

@@ -63,9 +63,8 @@ def main_ui(
 
         loading_intersect = loadings.spinners["Wave2"].__copy__()
         loading_intersect.prefix = "Searching dict: "
-        loading_intersect.multiple = 1000
+        loading_intersect.multiple = 100
         loading_intersect.per_second = True
-        loading_intersect.more_counters("words")
 
 
     # Main
