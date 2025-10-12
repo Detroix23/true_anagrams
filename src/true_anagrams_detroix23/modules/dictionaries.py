@@ -91,7 +91,7 @@ def in_dict(
         if ignore_case:
             mid_value = dictionnary[mid].lower()
             
-        # logs.dbg(f"{word} {len(word)} {sorting.str_to_int(word)}, {mid_value} {len(mid_value)} {sorting.str_to_int(mid_value)}")
+        logs.dbg(f"{word} {len(word)} {sorting.str_to_int(word)}, {mid_value} {len(mid_value)} {sorting.str_to_int(mid_value)}")
 
         # Dichotomy.
         if sorting.str_to_int(mid_value) == sorting.str_to_int(word):
