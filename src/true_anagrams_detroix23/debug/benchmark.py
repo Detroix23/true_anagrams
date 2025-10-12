@@ -22,7 +22,9 @@ def benchmark(functions: list[Callable[[str, str], Any]], repetitions: int) -> r
     values: tuple[str, str] = ("abcdefghj", "zyxwvusty")
     results: dict[int, list[float]] = {}
 
-    for n in range(1, repetitions):
+    print("Iteration: ", end="", flush=True)
+    for n in range(1, repetitions + 1):
+        print(n, end=", ", flush=True)
         iteration_times: list[float] = list()
 
         for function in functions:
@@ -36,21 +38,49 @@ def benchmark(functions: list[Callable[[str, str], Any]], repetitions: int) -> r
 
         results[n] = iteration_times
 
+    print()
     return results
 
-def print_results(results: result) -> None:
+def print_results(results: result, joint: str = " | ") -> None:
     """
     Prints a nicely formatted benchmark result.
     """
+    rounding: int = 2
+    maxes: list[int] = [1 for _ in range(len(results[1]))]
+
+    # Max.
+    for line in results.values():
+        for index, item in enumerate(line):
+            length: int = len(str(round(item, rounding)))
+            if length > maxes[index]:
+                maxes[index] = length
+
+    # Template.
+    template: list[str] = []
+    for key, line in results.items():
+        template.append(" " + str(key))
+        template.append(joint)
+
+        for index, item in enumerate(line):
+            number: str = str(round(item, rounding))
+            delta: int = maxes[index] - len(number)
+            
+            template.append(number + (" " * delta))
+            template.append(joint)
+        
+        template.append("\n")
+
+    print(" n" + joint + "Functions (s) ... ")
+    print("--------------------" + ("-" * len(joint)))
+    print("".join(template))
     
 
 
 
 
-
-
 def main() -> None:
-    results = benchmark([sorting._greater_word_int], 100000)      # pyright: ignore[reportPrivateUsage]
+    results = benchmark([sorting._greater_word_int], 6)      # pyright: ignore[reportPrivateUsage]
+    print_results(results)
 
 if __name__ == "__main__":
     main()

@@ -90,7 +90,7 @@ def main(args: list[str]) -> None:
         tests.tests()
 
     elif mode == RunMode.BENCHMARK:
-        benchmark.benchmark()
+        benchmark.main()
 
     elif mode == RunMode.HELP:
         ui.help.help()
