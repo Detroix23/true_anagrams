@@ -2,9 +2,10 @@
 ANAGRAMS
 paths.py
 """
-from pathlib import Path
+import pathlib
+from typing import Final
 
 # Directories
-DICTIONARIES: Path = Path("./data/dictionaries")
-RESULTS: Path = Path("./data/results")
+DICTIONARIES: Final[pathlib.Path] = pathlib.Path("./data/dictionaries")
+RESULTS: Final[pathlib.Path] = pathlib.Path("./data/results")
 

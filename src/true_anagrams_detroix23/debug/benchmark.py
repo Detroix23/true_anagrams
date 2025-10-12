@@ -13,7 +13,7 @@ def benchmark() -> list[float]:
     print("# True Anagrams.")
     print("## BENCHMARKING.")
 
-    repetitions: int = 1000000
+    repetitions: int = 1000000000
     print(f"For {repetitions} repetitions.")
 
     time_int: float = time.monotonic()

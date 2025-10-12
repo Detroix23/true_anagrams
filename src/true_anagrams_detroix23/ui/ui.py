@@ -3,6 +3,7 @@ ANAGRAMS
 ui.py
 """
 import sys
+import pathlib
 
 import modules.paths as paths
 import modules.anagrams as anagrams
@@ -37,7 +38,7 @@ def main_ui(
     Main function execute on run.
     """
     # Initialization.
-    dictionnary_path: paths.Path = paths.DICTIONARIES / dictionary_name
+    dictionnary_path: pathlib.Path = paths.DICTIONARIES / dictionary_name
     if not dictionnary_path.is_file():
         raise FileNotFoundError(f"(X) - Dictionary in {dictionnary_path} does not exist.\n")
 
