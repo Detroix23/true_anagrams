@@ -103,15 +103,11 @@ def main_ui(
             
             ui.cli.move_up(1)
             ui.cli.clear_to_bottom()
-            print(prompt + Style.BOLD + Style.OKCYAN + user_word + Style.ENDC)
-
+            print(prompt + Style.BOLD + Style.OKCYAN + user_word + Style.ENDC, flush=True)
 
             if user_word == "":
-                # Move up.
-                sys.stdout.write(ESC + "[1A")
-                # Clear to the bottom end of the screen.
-                # sys.stdout.write(ESC + "[J")
-
+                ui.cli.move_up(1)
+                ui.cli.clear_to_bottom()                
                 sys.stdout.flush()
 
             elif user_word:
