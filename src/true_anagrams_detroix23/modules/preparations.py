@@ -9,16 +9,14 @@ import modules.files as files
 import modules.sorting as sorting
 
 # Dictionary setup.
-def dictionary(dictionnary_path: pathlib.Path, name: str = "prepared") -> None:
+def dictionary(dictionnary_path: pathlib.Path, name: str = "prepared") -> bool:
     """
-    Setup the main used dictionary.
+    Setup the main used dictionary. \r
+    Return if the dictionary was not sorted.
     """
     dictionnary_sort: bool
     with open(dictionnary_path, "r") as file:
         dictionary: list[str] = files.load_into_list(file)
-        
-        # Word length
-        sorting.equalize_word_length(dictionary)
 
         # Sorting
         dictionnary_sort = sorting.check(dictionary, raise_on_unsorted=False)
@@ -44,7 +42,7 @@ def dictionary(dictionnary_path: pathlib.Path, name: str = "prepared") -> None:
             print("WRITING A NEW")
             files.write_list(dictionary, paths.DICTIONARIES / name)
     
-    return
+    return not dictionnary_sort
 
 
 def all_lower_case(iterable: list[str]) -> None:

@@ -46,8 +46,8 @@ def main_ui(
     # Preparations.
     if prepare_dictionary:
         preparation_tag: str = "_prepared"
-        preparation.dictionary(dictionnary_path, dictionary_name + preparation_tag)
-        dictionnary_path = paths.DICTIONARIES / (dictionary_name + preparation_tag)
+        if preparation.dictionary(dictionnary_path, dictionary_name + preparation_tag):
+            dictionnary_path = paths.DICTIONARIES / (dictionary_name + preparation_tag)
 
     # Informations.
     dictionnary_infos: dictionaries.Infos = dictionaries.dict_info(dictionnary_path)

@@ -32,7 +32,7 @@ def main(args: list[str]) -> None:
     mode: RunMode = RunMode.MAIN
     prepare_dictionary: bool = True
 
-    dictionary_name: str = "default"
+    dictionary_name: str = "default_prepared"
 
     # Check args
     print(f"args: {args}")

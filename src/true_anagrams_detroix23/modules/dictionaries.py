@@ -35,8 +35,11 @@ def dict_info(dict_path: Path) -> Infos:
     """
     # Line count.
     lines: list[str] = list()
-    with open(dict_path, "r") as words:
-        lines = files.load_into_list(words)
+    try:
+        with open(dict_path, "r") as words:
+            lines = files.load_into_list(words)
+    except FileNotFoundError:
+        raise FileNotFoundError(f"(X) - File on `{dict_path}` does not exists.")
     # Sort.
     is_sorted: bool = sorting.check(lines)
 
