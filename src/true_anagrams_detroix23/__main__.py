@@ -1,0 +1,119 @@
+"""
+ANAGRAMS
+__main__.py
+"""
+import sys
+import enum
+
+import ui.ui
+import ui.help
+import debug.tests as tests
+import debug.benchmark as benchmark
+import debug.logs
+
+class RunMode(enum.Enum):
+    MAIN = 0
+    TEST = 1
+    BENCHMARK = 2
+    HELP = 3
+    README = 4
+    
+
+def main(args: list[str]) -> None:
+    """
+    Main entry point of the program. \n
+    Take a list `args`, the run arguments.
+    """
+    # Default values
+    error_args: list[str] = []
+    loading_bars: bool = True
+    ascii_art: bool = True
+    credit_text: bool = True
+    mode: RunMode = RunMode.MAIN
+    prepare_dictionary: bool = True
+
+    dictionary_name: str = "default_prepared"
+
+    # Check args
+    print(f"args: {args}")
+    index: int = 0
+    read: bool = True
+    while index < len(args) and read:
+        arg: str = args[index]
+
+        if arg in {"-h", "--help"}:
+            mode = RunMode.HELP
+            read = False
+
+        elif arg == "-n":
+            if index + 1 >= len(args):
+                raise NameError(f"(X) - Argument `-n` need to be followed by a file name.")
+            else:
+                dictionary_name = args[index + 1]
+
+        elif arg in {"-p", "--noprep"}:
+            prepare_dictionary = False
+            
+        elif arg in {"-d", "--debug"}:
+            debug.logs.DEBUG = True
+
+        elif arg in {"-c", "--nocontext"}:
+            credit_text = False
+            ascii_art = False
+
+        elif arg in {"-t", "--test"}:
+            mode = RunMode.TEST
+
+        elif arg in {"-b", "--bench"}:
+            mode = RunMode.BENCHMARK
+
+        elif arg == "--noloading":
+            loading_bars = False
+
+        elif arg == "--noascii":
+            ascii_art = False
+
+        elif arg == "--nocredit":
+            credit_text = False
+        
+        elif arg == "--readme":
+            mode = RunMode.README
+            read = False
+
+        else:
+            error_args.append(arg)
+
+        index += 1
+
+
+    if mode == RunMode.TEST:
+        tests.tests()
+
+    elif mode == RunMode.BENCHMARK:
+        benchmark.main()
+
+    elif mode == RunMode.HELP:
+        ui.help.help()
+
+    elif mode == RunMode.README:
+        ui.help.readme()
+
+    else:
+        ui.ui.main_ui(
+            loading_bars,
+            ascii_art,
+            error_args,
+            credit_text,
+            dictionary_name,
+            prepare_dictionary
+        )
+
+
+if __name__ == "__main__":
+    # Terminal arguments.
+    args: list[str] = sys.argv
+    args.pop(0)
+
+    # Main run.
+    main(args)
+    
