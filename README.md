@@ -15,10 +15,12 @@ To configure, type `--help` as an argument while executing the scirpt, to get he
 ## Prequisites.
 - Run using a Virtual Environement.
 - Be sure to have a tree looking like this:
+```
     .
     ├── data
     ├── src
         └── true_anagrams_detroix23
-            ├── `__main__.py`
+            ├── __main__.py               
             └── ...
     └── ...
+```
