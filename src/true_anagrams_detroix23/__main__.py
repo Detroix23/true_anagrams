@@ -3,109 +3,101 @@ ANAGRAMS
 __main__.py
 """
 import sys
-import enum
 
-import ui.ui
+import compatibility.plateform
+import compatibility.settings
+import ui.base
+import ui.interaction
 import ui.help
 import debug.tests as tests
 import debug.benchmark as benchmark
 import debug.logs
 
-class RunMode(enum.Enum):
-    MAIN = 0
-    TEST = 1
-    BENCHMARK = 2
-    HELP = 3
-    README = 4
-    
 
 def main(args: list[str]) -> None:
     """
     Main entry point of the program. \n
     Take a list `args`, the run arguments.
     """
-    # Default values
-    error_args: list[str] = []
-    loading_bars: bool = True
-    ascii_art: bool = True
-    credit_text: bool = True
-    mode: RunMode = RunMode.MAIN
-    prepare_dictionary: bool = True
-
-    dictionary_name: str = "default_prepared"
+    # Default values.
+    main_settings: compatibility.settings.Run = compatibility.settings.Run()
 
     # Check args
-    print(f"args: {args}")
+    print(f"Running on {compatibility.plateform.OS} - Args: {args}")
     index: int = 0
     read: bool = True
     while index < len(args) and read:
         arg: str = args[index]
 
         if arg in {"-h", "--help"}:
-            mode = RunMode.HELP
+            main_settings.mode = compatibility.settings.RunMode.HELP
             read = False
 
         elif arg == "-n":
             if index + 1 >= len(args):
                 raise NameError(f"(X) - Argument `-n` need to be followed by a file name.")
             else:
-                dictionary_name = args[index + 1]
+                main_settings.dictionary_name = args[index + 1]
 
         elif arg in {"-p", "--noprep"}:
-            prepare_dictionary = False
+            main_settings.prepare_dictionary = False
             
         elif arg in {"-d", "--debug"}:
-            debug.logs.DEBUG = True
+            debug.logs.DEBUG = not debug.logs.DEBUG
 
         elif arg in {"-c", "--nocontext"}:
-            credit_text = False
-            ascii_art = False
+            main_settings.credit_text = False
+            main_settings.ascii_art = False
 
         elif arg in {"-t", "--test"}:
-            mode = RunMode.TEST
+            main_settings.mode = compatibility.settings.RunMode.TEST
+            debug.logs.DEBUG = True
 
         elif arg in {"-b", "--bench"}:
-            mode = RunMode.BENCHMARK
+            main_settings.mode = compatibility.settings.RunMode.BENCHMARK
+
+        elif arg == "--nocolor":
+            ui.base.enable_colors = False
 
         elif arg == "--noloading":
-            loading_bars = False
+            main_settings.loading_bars = False
 
         elif arg == "--noascii":
-            ascii_art = False
+            main_settings.ascii_art = False
 
         elif arg == "--nocredit":
-            credit_text = False
+            main_settings.credit_text = False
         
         elif arg == "--readme":
-            mode = RunMode.README
+            main_settings.mode = compatibility.settings.RunMode.README
             read = False
 
         else:
-            error_args.append(arg)
+            main_settings.error_args.append(arg)
 
         index += 1
 
 
-    if mode == RunMode.TEST:
-        tests.tests()
+    if main_settings.mode == compatibility.settings.RunMode.TEST:
+        tests.main()
 
-    elif mode == RunMode.BENCHMARK:
+    elif main_settings.mode == compatibility.settings.RunMode.BENCHMARK:
         benchmark.main()
 
-    elif mode == RunMode.HELP:
+    elif main_settings.mode == compatibility.settings.RunMode.HELP:
         ui.help.help()
 
-    elif mode == RunMode.README:
+    elif main_settings.mode == compatibility.settings.RunMode.README:
         ui.help.readme()
 
     else:
-        ui.ui.main_ui(
-            loading_bars,
-            ascii_art,
-            error_args,
-            credit_text,
-            dictionary_name,
-            prepare_dictionary
+        ui.interaction.main_ui(
+            main_settings.loading_bars,
+            main_settings.ascii_art,
+            main_settings.error_args,
+            main_settings.credit_text,
+            main_settings.dictionary_name,
+            main_settings.prepare_dictionary
         )
 
 

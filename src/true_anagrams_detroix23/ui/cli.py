@@ -3,16 +3,15 @@ TRUE ANAGRAMS
 cli.py
 """
 import sys
-from typing import Final
 
-ESC: Final[str] = "\033"
+import ui.base
 
 def move_up(times: int = 1) -> None:
     """
     Move the Terminal cursor up `times`.
     """
-    sys.stdout.write(ESC + "[" + str(times) + "A")
+    sys.stdout.write(ui.base.ESC + "[" + str(times) + "A")
     return
 
 def clear_to_bottom() -> None:
-    sys.stdout.write(ESC + "[J")
+    sys.stdout.write(ui.base.ESC + "[J")
