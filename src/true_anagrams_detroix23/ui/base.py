@@ -15,10 +15,9 @@ ESC: Final[str] = (
 
 ENABLE_COLOR: bool = True
 
-@dataclasses.dataclass
-class Style:
+class _DefaultColors:
     """
-    CLI colors.
+    Define the defaults colors, using ESC.
     """
     ENDC: types.controlCharacter = ESC + '[0m'
     BOLD: types.controlCharacter = ESC + '[1m'
@@ -29,3 +28,35 @@ class Style:
     OKBLUE: types.controlCharacter = ESC + '[94m'
     HEADER: types.controlCharacter = ESC + '[95m'
     OKCYAN: types.controlCharacter = ESC + '[96m'
+
+
+@dataclasses.dataclass
+class _Style:
+    """
+    CLI colors.
+    """
+    endc: types.controlCharacter = _DefaultColors.ENDC
+    bold: types.controlCharacter = _DefaultColors.BOLD
+    under: types.controlCharacter = _DefaultColors.UNDERLINE
+    fail: types.controlCharacter = _DefaultColors.FAIL
+    okgreen: types.controlCharacter = _DefaultColors.OKGREEN
+    warning: types.controlCharacter = _DefaultColors.WARNING
+    okblue: types.controlCharacter = _DefaultColors.OKBLUE
+    header: types.controlCharacter = _DefaultColors.HEADER
+    okcyan: types.controlCharacter = _DefaultColors.OKCYAN
+
+    def disable_color(self) -> None:
+        """
+        Transform all color to an empty string.
+        """
+        self.endc = ""
+        self.bold = ""
+        self.under = ""
+        self.fail = ""
+        self.okgreen = ""
+        self.warning = ""
+        self.okblue = ""
+        self.header = ""
+        self.okcyan = ""
+
+STYLE: _Style = _Style()

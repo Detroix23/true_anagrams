@@ -62,17 +62,17 @@ def main_ui(
         print("\n# True Anagrams.\n")
 
     if error_args:
-        print(f"{ui.base.Style.FAIL}(!) - Some invalid arguments:", end=" ")
+        print(f"{ui.base.STYLE.fail}(!) - Some invalid arguments:", end=" ")
         for arg in error_args:
             print(f"`{arg}`", end=" ")
-        print(f"{ui.base.Style.ENDC}")
+        print(f"{ui.base.STYLE.endc}")
 
     if credit_text:
-        print(f"{ui.base.Style.HEADER}By Detroix23, 2025.{ui.base.Style.ENDC}")
+        print(f"{ui.base.STYLE.header}By Detroix23, 2025.{ui.base.STYLE.endc}")
         print(f"{art.TAB}https://github.com/Detroix23/TrueAnagrams")
         print(f"{art.TAB}CC-BY 4.0")
         print()
-    print(f"{ui.base.Style.OKCYAN}Using dictionnary: {ui.base.Style.BOLD}{dictionnary_infos.path}{ui.base.Style.ENDC}")
+    print(f"{ui.base.STYLE.okcyan}Using dictionnary: {ui.base.STYLE.bold}{dictionnary_infos.path}{ui.base.STYLE.endc}")
     print(f"{art.TAB}Words: {dictionnary_infos.entries}")
     print(f"{art.TAB}Is sorted: {dictionnary_infos.sort}")
     print(f"{art.TAB}Word length: {dictionnary_infos.word_length}")
@@ -85,12 +85,12 @@ def main_ui(
         prompt: str = "- Enter a word: "
 
         while True:
-            user_word: str = input(prompt + ui.base.Style.BOLD)
-            print(ui.base.Style.ENDC, end="")
+            user_word: str = input(prompt + ui.base.STYLE.bold)
+            print(ui.base.STYLE.endc, end="")
             
             ui.cli.move_up(1)
             ui.cli.clear_to_bottom()
-            print(prompt + ui.base.Style.BOLD + ui.base.Style.OKCYAN + user_word + ui.base.Style.ENDC, flush=True)
+            print(prompt + ui.base.STYLE.bold + ui.base.STYLE.okcyan + user_word + ui.base.STYLE.endc, flush=True)
 
             if user_word == "":
                 ui.cli.move_up(1)
@@ -118,10 +118,11 @@ def main_ui(
                     print(set_to_table(
                         matching_anagrams,
                         row_prefix="\t│",
+                        color=ui.base.STYLE.okgreen
                     ))
                 else:
                     print(f"=> Correct anagrams 0/{len(user_anagrams)}:")
-                    print(f"\t{ui.base.Style.FAIL}No correct anagrams!{ui.base.Style.ENDC}")
+                    print(f"\t{ui.base.STYLE.fail}No correct anagrams!{ui.base.STYLE.endc}")
 
                 print("")
                 if loading_bars and loading_combinations is not None and loading_intersect is not None:
@@ -129,7 +130,7 @@ def main_ui(
                     loading_intersect.reset()
 
     except KeyboardInterrupt:
-        print(f"\n{ui.base.Style.ENDC}{ui.base.Style.WARNING}(+) - User interrupt (Ctrl+C).{ui.base.Style.ENDC}\n")
+        print(f"\n{ui.base.STYLE.endc}{ui.base.STYLE.warning}(+) - User interrupt (Ctrl+C).{ui.base.STYLE.endc}\n")
 
 
 def set_to_table(
@@ -139,7 +140,7 @@ def set_to_table(
     row_suffix: str = "",
     spacer: str = " ",
     table_footer: str = "─",
-    color: str = ui.base.Style.OKGREEN
+    color: str = ""
 ) -> str:
     """
     Return a formatted string of row-col table.
@@ -152,7 +153,7 @@ def set_to_table(
         if char_count > max_per_col and len(element) <= max_per_col:
             table += f"{row_suffix}\n{row_prefix}"
         else:
-            table += f"{spacer}{color}{element}{ui.base.Style.ENDC}"
+            table += f"{spacer}{color}{element}{ui.base.STYLE.endc}"
 
     if table_footer:
         table += f"\n{row_prefix}{table_footer * max_per_col}"

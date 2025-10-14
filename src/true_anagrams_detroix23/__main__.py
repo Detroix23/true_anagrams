@@ -62,6 +62,7 @@ def main(args: list[str]) -> None:
 
         elif arg == "--nocolor":
             ui.base.ENABLE_COLOR = False
+            ui.base.STYLE.disable_color()
 
         elif arg == "--noloading":
             main_settings.loading_bars = False
