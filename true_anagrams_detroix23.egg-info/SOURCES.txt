@@ -1,0 +1,7 @@
+LICENSE.md
+README.md
+pyproject.toml
+true_anagrams_detroix23.egg-info/PKG-INFO
+true_anagrams_detroix23.egg-info/SOURCES.txt
+true_anagrams_detroix23.egg-info/dependency_links.txt
+true_anagrams_detroix23.egg-info/top_level.txt

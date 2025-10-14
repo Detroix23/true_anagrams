@@ -11,12 +11,16 @@ import modules.paths as paths
 import debug.logs
 
 
-def write_result_line(file: TextIO, word: str, matching: set[str], indentation: int = 1) -> str:
+def write_result_line(file: TextIO, word: str, matching: set[str]) -> str:
     """
-    Write in a JSON format the word's result.
-    Return the line as a `str`.
+    Write in a CSV format the word's results.   \r
+    Return the line as a `str`. \r
+    Format:
+    ```python
+    word, anagram1, anagram2, ... <EOL>
+    ```
     """
-    line: str = f'{"t" * indentation}"{word}": [{", ".join(matching)}], \n'
+    line: str = f"{word}, [{", ".join(matching)}]\n"
     debug.logs.dbg(line)
     file.write(line)
 
