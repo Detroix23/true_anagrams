@@ -4,6 +4,7 @@ __main__.py
 """
 import sys
 
+import modules.all_words as all_words
 import compatibility.plateform
 import compatibility.settings
 import ui.base
@@ -56,8 +57,11 @@ def main(args: list[str]) -> None:
         elif arg in {"-b", "--bench"}:
             main_settings.mode = compatibility.settings.RunMode.BENCHMARK
 
+        elif arg in {"-a", "--allwords"}:
+            main_settings.mode = compatibility.settings.RunMode.ALL
+
         elif arg == "--nocolor":
-            ui.base.enable_colors = False
+            ui.base.ENABLE_COLOR = False
 
         elif arg == "--noloading":
             main_settings.loading_bars = False
@@ -89,6 +93,9 @@ def main(args: list[str]) -> None:
 
     elif main_settings.mode == compatibility.settings.RunMode.README:
         ui.help.readme()
+
+    elif main_settings.mode == compatibility.settings.RunMode.ALL:
+        all_words.main(main_settings.dictionary_name)
 
     else:
         ui.interaction.main_ui(

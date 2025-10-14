@@ -32,7 +32,7 @@ def test_all_words() -> None:
 
 
 def main() -> None:
-    test_all_words()
+    tests_sorting()
 
 if __name__ == "__main__":
     main()

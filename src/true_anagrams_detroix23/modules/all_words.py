@@ -76,3 +76,19 @@ Continuing program.
     return (success, time.perf_counter() - time_elapsed)
 
 
+def main(name: str = "default") -> None:
+    print("# True Anagrams")
+    print("SEARCH ALL WORDS.")
+
+    success, time_elapsed = run(name)
+
+    if success:
+        print(f"Success in {time_elapsed}s !")
+    else:
+        print(f"Failure in {time_elapsed}")
+
+if __name__ == "__main__":
+    main()
+
+
+

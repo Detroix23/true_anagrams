@@ -15,6 +15,7 @@ class RunMode(enum.Enum):
     BENCHMARK = 2
     HELP = 3
     README = 4
+    ALL = 5
 
 
 @dataclasses.dataclass

@@ -2,6 +2,7 @@
 TRUE ANAGRAMS
 base.py
 """
+import dataclasses
 from typing import Final
 
 import compatibility.plateform
@@ -12,8 +13,9 @@ ESC: Final[str] = (
     else "\0x1b"
 )
 
-enable_colors: bool = True
+ENABLE_COLOR: bool = True
 
+@dataclasses.dataclass
 class Style:
     """
     CLI colors.
@@ -27,4 +29,3 @@ class Style:
     OKBLUE: types.controlCharacter = ESC + '[94m'
     HEADER: types.controlCharacter = ESC + '[95m'
     OKCYAN: types.controlCharacter = ESC + '[96m'
-    
