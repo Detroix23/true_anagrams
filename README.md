@@ -1,11 +1,26 @@
-# True Anagram
+# True Anagrams.
 
-Find anagrams, and find if they exist in the dictionnary.
+Find anagrams, and find if they exist in the dictionary.
 
-## Usage
-Run using a Virtual Environement.
-With no arguments, the scripts launches an interactive input screen.
-    - Enter words, and it will find existing anagrams.
+## Dictionaries
+Set your own dictionaries in the `./data/dictionaries` directory.
+By default, the script comes with a `default` dictionary.
+    - It is French with ~22k words.
 
-Enter `--help` as an argument, to get help about other commands.
- 
+## Commands.
+Execute the file `./src/true_angrams_detroix23/__main__.py`.
+    - You will enter an interactive CLI.
+To configure, type `--help` as an argument while executing the scirpt, to get help about other commands.
+
+## Prequisites.
+- Run using a Virtual Environement.
+- Be sure to have a tree looking like this:
+```
+    .
+    ├── data
+    ├── src
+        └── true_anagrams_detroix23
+            ├── __main__.py               
+            └── ...
+    └── ...
+```
