@@ -3,11 +3,8 @@ TRUE ANAGRAMS
 types.py
 """
 import pathlib
-from typing import Union, Optional, Literal, TYPE_CHECKING
+from typing import Union, Literal
 
-if TYPE_CHECKING:
-    import ui.loadings
-
-checkWordArgs = tuple[str, set[str], int, pathlib.Path, Optional['ui.loadings.Spinner']]
+checkWordArgs = tuple[str, set[str], int, pathlib.Path]
 
 controlCharacter = Union[str, Literal[""]]

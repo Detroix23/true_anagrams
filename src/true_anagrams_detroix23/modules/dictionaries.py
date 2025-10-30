@@ -58,7 +58,6 @@ def in_dict(
     word: str,
     length: int,
     dictionnary_path: Path,
-    loading_animation: Optional[loadings.Spinner] = None
 ) -> bool:
     """
     Search using dichotomy a word.
@@ -122,15 +121,14 @@ def check_word(
     word_in: str,
     blacklist: set[str],
     length: int, 
-    dictionary_path: Path, 
-    loading_animation: Optional[loadings.Spinner] = None,
+    dictionary_path: Path,
 ) -> Optional[str]:
         """
         Calls `in_dict` and search a given word in the multiprocessed `intersect` function.
         """
         result: Optional[str] = None
 
-        if in_dict(word_in, length, dictionary_path, loading_animation) and word_in not in blacklist:
+        if in_dict(word_in, length, dictionary_path) and word_in not in blacklist:
             result = word_in
 
         return result
@@ -165,7 +163,7 @@ def intersect(
     with concurrent.futures.ProcessPoolExecutor() as executor:
         # Create arguments for all future processes. `Word` iterate, while the other stay constant.
         arguments: list[types.checkWordArgs] = [
-            (word, blacklist, length, dictionary_path, loading_animation) for word in words
+            (word, blacklist, length, dictionary_path) for word in words
         ]
         
         for result in executor.map(intersect_prepare_processes, arguments):
@@ -173,6 +171,7 @@ def intersect(
                 logs.dbg(f"! {result} {type(result)}.")
                 
                 if loading_animation is not None:
+                    # loading_animation.counters["processes"] = len(executor._processes)
                     loading_animation.increment()
                 
                 if result:
@@ -188,11 +187,13 @@ def intersect(
         loading_animation.finish()
     
     print("")
-    print(f"Time for `intersect`: {time_elapsed:.2f}s, average: {len(words)/time_elapsed:.2f}words/ s")
+    print(
+        f"* t(`dictionaries.intersect`) = {time_elapsed:.2f}s, w̅ = {len(words)/time_elapsed:.2f}words/ s"
+    )
     return set(filtered)
 
 
-def intersect_sync(
+def intersect_mono(
     words: set[str],
     length: int,
     dictionnary_path: Path, 
@@ -211,7 +212,7 @@ def intersect_sync(
         """
         result: Optional[str] = None
 
-        if in_dict(word_in, length, dictionnary_path, loading_animation) and word_in not in blacklist:
+        if in_dict(word_in, length, dictionnary_path) and word_in not in blacklist:
             result = word_in
 
         return result

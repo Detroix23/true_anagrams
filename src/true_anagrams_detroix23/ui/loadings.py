@@ -213,10 +213,6 @@ class Spinner(Animation):
         if self.counters:
             for name, count in self.counters.items():
                 template.append(f"{name}: {count} ")
-                if time_elapsed != 0 and self.per_second:
-                    template.append(f"{count / time_elapsed:.1f}/s ")
-                elif self.per_second:
-                    template.append(f"∞/s ")
 
         # Time counter
         template.append(f"{time_elapsed:.2f}s ")

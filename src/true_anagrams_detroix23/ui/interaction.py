@@ -3,6 +3,7 @@ ANAGRAMS
 ui.py
 """
 import sys
+import os
 import pathlib
 
 import modules.paths as paths
@@ -47,13 +48,12 @@ def main_ui(
         loading_combinations = loadings.spinners["Wave2"].__copy__()
         loading_combinations.multiple = 15000
         loading_combinations.prefix = "Anagrams: "
-        loading_combinations.more_counters("anagrams")
+        loading_combinations.more_counters(["anagrams"])
 
         loading_intersect = loadings.spinners["Wave2"].__copy__()
         loading_intersect.prefix = "Searching dict: "
         loading_intersect.multiple = 100
         loading_intersect.per_second = True
-
 
     # Main
     if ascii_art:
@@ -102,8 +102,9 @@ def main_ui(
                     user_word,
                     loading_animation=loading_combinations
                 )
-                print(f"Found {len(user_anagrams)} anagrams.")
-                
+                print(f"* n(anagram) = {len(user_anagrams)}.")
+                print(f"* Anagrams ∩ Dictionary; n(process) = {os.cpu_count()}.")
+
                 # Check all word's anagrams.
                 matching_anagrams: set[str] = dictionaries.intersect(
                     user_anagrams,
