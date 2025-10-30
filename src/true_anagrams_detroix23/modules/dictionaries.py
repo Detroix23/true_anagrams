@@ -38,9 +38,11 @@ def dict_info(dict_path: Path) -> Infos:
     """
     # Line count.
     lines: list[str] = list()
+    word_length: int = 0
     try:
         with open(dict_path, "r") as words:
             lines = files.load_into_list(words)
+            word_length = max_length(lines)
     except FileNotFoundError:
         raise FileNotFoundError(f"(X) - File on `{dict_path}` does not exists.")
     # Sort.
@@ -50,8 +52,18 @@ def dict_info(dict_path: Path) -> Infos:
         len(lines),
         is_sorted,
         str(dict_path),
-        len(lines[0])
+        word_length
     )
+
+def max_length(dictionary: list[str]) -> int:
+    """
+    Return the longest word of the list.
+    """
+    length: int = 0
+    for word in dictionary:
+        length = max(length, len(word))
+
+    return length
 
 
 def in_dict(

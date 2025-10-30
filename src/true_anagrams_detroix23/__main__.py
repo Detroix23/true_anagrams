@@ -27,6 +27,7 @@ def main(args: list[str]) -> None:
     print(f"Running on {compatibility.plateform.OS} - Args: {args}")
     index: int = 0
     read: bool = True
+    sanitize_next: int = 0
     while index < len(args) and read:
         arg: str = args[index]
 
@@ -39,7 +40,7 @@ def main(args: list[str]) -> None:
                 raise NameError(f"(X) - Argument `-n` need to be followed by a file name.")
             else:
                 main_settings.dictionary_name = args[index + 1]
-
+                sanitize_next = 2
         elif arg in {"-p", "--noprep"}:
             main_settings.prepare_dictionary = False
             
@@ -77,11 +78,11 @@ def main(args: list[str]) -> None:
             main_settings.mode = compatibility.settings.RunMode.README
             read = False
 
-        else:
+        elif not sanitize_next > 0:
             main_settings.error_args.append(arg)
 
+        sanitize_next -= 1
         index += 1
-
 
     if main_settings.mode == compatibility.settings.RunMode.TEST:
         tests.main()

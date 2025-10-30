@@ -30,7 +30,7 @@ def main_ui(
     # Initialization.
     dictionnary_path: pathlib.Path = paths.DICTIONARIES / dictionary_name
     if not dictionnary_path.is_file():
-        raise FileNotFoundError(f"(X) - Dictionary in {dictionnary_path} does not exist.\n")
+        raise FileNotFoundError(f"(X) - Dictionary in `{dictionnary_path}` does not exist.\n")
 
     # Preparations.
     if prepare_dictionary:

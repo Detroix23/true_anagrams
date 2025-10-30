@@ -4,6 +4,7 @@ preparations.py
 """
 import pathlib
 
+import debug.logs
 import modules.paths as paths
 import modules.files as files
 import modules.sorting as sorting
@@ -23,23 +24,25 @@ def dictionary(dictionnary_path: pathlib.Path, name: str = "prepared") -> bool:
         if not dictionnary_sort:
             print(f"Not ready {dictionnary_path}.")
 
-            print("REMOVING DUPLICATES.")
-            dictionary = no_duplicates(dictionary)
-
-            if sorting.IGNORE_CASE:
-                print("LOWER CASING.")
-                all_lower_case(dictionary)
-            
-            print("EQUALIZING.")
+            print("* Equalizing.")
             sorting.equalize_word_length(dictionary)
 
-            print("SORTING A NEW")
+            dictionary_set: set[str] = set(dictionary)
+            if len(dictionary_set) != len(dictionary):
+                print(f"* Removing duplicates (Δ = {len(dictionary_set) - len(dictionary)}).")
+                dictionary = no_duplicates(dictionary)
+
+            if sorting.IGNORE_CASE:
+                print("* Lower casing.")
+                all_lower_case(dictionary)
+
+            print("* Sorting.")
             sorting.sort(dictionary)
 
             is_sorted: bool = sorting.check(dictionary, raise_on_unsorted=True)
             print("Sorted: " + str(is_sorted))
 
-            print("WRITING A NEW")
+            print("* Writing.")
             files.write_list(dictionary, paths.DICTIONARIES / name)
     
     return not dictionnary_sort
@@ -60,11 +63,13 @@ def no_duplicates(iterable: list[str]) -> list[str]:
     """
     Return a new list without duplicates.
     """
+    debug.logs.dbg("Converting to int")
     ints: list[int] = [sorting.str_to_int(word.lower()) for word in iterable]
     clean: list[str] = list()
 
     for code in ints:
-        word = sorting.int_to_str(code)
+        word: str = sorting.int_to_str(code)
+        debug.logs.dbg(f"Duplicates: {word} ({code})", end="\r")
         if word not in clean:
             clean.append(word)
 
