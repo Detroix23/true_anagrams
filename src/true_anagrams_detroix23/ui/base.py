@@ -10,7 +10,7 @@ import compatibility.types as types
 
 ESC: Final[str] = (
     "\033" if compatibility.plateform.OS == compatibility.plateform.Os.UNIX 
-    else "\0x1b"
+    else "\033"
 )
 
 ENABLE_COLOR: bool = True

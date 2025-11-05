@@ -10,12 +10,18 @@ from enum import Enum
 from typing import Union
 
 class State(Enum):
+    """
+    Define animations loading states.
+    """
     READY = 0
     RUNNING = 1
     FINISHED = 2
 
 
 class Animation:
+    """
+    Mother class for `Bar` and `Spinner`.
+    """
     _i: int
     first_time: float
 
@@ -29,6 +35,9 @@ class Animation:
 
 
 class Bar(Animation):
+    """
+    Define, create, render and update a loading bar.
+    """
     def __init__(
         self, 
         progress: str, 
@@ -118,6 +127,9 @@ class Bar(Animation):
         self.increment(0)
 
 class Spinner(Animation):
+    """
+    Define, create, render and update a loading bar.
+    """
     def __init__(
         self, 
         symbols: Union[list[str], str], 
@@ -225,6 +237,9 @@ class Spinner(Animation):
         sys.stdout.flush()
     
     def __copy__(self) -> 'Spinner':
+        """
+        Deep copy of the `Spinner`.
+        """
         copied: 'Spinner' = Spinner(
             self.symbols, 
             self.max, 

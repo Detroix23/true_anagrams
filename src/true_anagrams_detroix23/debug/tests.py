@@ -5,7 +5,7 @@ tests.py
 import time
 
 import modules.sorting as sorting
-import modules.all_words as all_words
+import dictionaries.all_words as all_words
 
 def tests_sorting() -> float:
     """

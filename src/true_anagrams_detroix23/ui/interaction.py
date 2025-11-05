@@ -7,8 +7,8 @@ import os
 import pathlib
 
 import modules.paths as paths
-import modules.anagrams as anagrams
-import modules.dictionaries as dictionaries
+import anagrams.base as anagrams
+import dictionaries.base as dictionaries
 import modules.preparations as preparation
 import ui.base
 import ui.cli
@@ -85,7 +85,7 @@ def main_ui(
         prompt: str = "- Enter a word: "
 
         while True:
-            user_word: str = input(prompt + ui.base.STYLE.bold)
+            user_word: str = input(f"{prompt}{ui.base.STYLE.bold}")
             print(ui.base.STYLE.endc, end="")
             
             ui.cli.move_up(1)

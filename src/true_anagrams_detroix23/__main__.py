@@ -4,7 +4,7 @@ __main__.py
 """
 import sys
 
-import modules.all_words as all_words
+import dictionaries.all_words as all_words
 import compatibility.plateform
 import compatibility.settings
 import ui.base
@@ -17,8 +17,8 @@ import debug.logs
 
 def main(args: list[str]) -> None:
     """
-    Main entry point of the program. \n
-    Take a list `args`, the run arguments.
+    Main entry point of the program.  
+    Take a list `args`, the run arguments.  
     """
     # Default values.
     main_settings: compatibility.settings.Run = compatibility.settings.Run()

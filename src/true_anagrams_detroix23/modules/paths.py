@@ -1,6 +1,7 @@
 """
 ANAGRAMS
 paths.py
+Store paths constants.
 """
 import pathlib
 from typing import Final

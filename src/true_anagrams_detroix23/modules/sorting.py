@@ -2,13 +2,12 @@
 TRUE ANAGRAMS
 sorting.py
 """
-from typing import Union
+from typing import Union, Final
 
 # Ignore case.
-IGNORE_CASE: bool = True
-
+IGNORE_CASE: Final[bool] = True
 # Alphabetic range
-ALPHABET: set[int] = set(range(97, 123))
+ALPHABET: Final[set[int]] = set(range(97, 123))
 
 def str_to_int(word: str, base: int = 27) -> int:
     """
@@ -101,8 +100,9 @@ def check(iterable: Union[list[str], tuple[str]], *, raise_on_unsorted: bool = F
 
 def sort(iterable: list[str], raise_unsorted: bool = False) -> None:
     """
-    Sort, by reference, alphabetically an `iterable`. \r
-    Insertion sort starting from the end.
+    Sort, by reference, alphabetically an `iterable`.  
+    Insertion sort starting from the end.  
+    Toggle on `raise_unsorted` when you are already sure that the iterable is sorted.  
     """
     rank: int = len(iterable) - 1
     sub: int
@@ -117,7 +117,6 @@ def sort(iterable: list[str], raise_unsorted: bool = False) -> None:
             sub_word = sub_word.lower()
 
         if is_greater(word, sub_word):
-            # print()
             if raise_unsorted:
                 raise StopIteration(f"""
 Not sorted on rank: {rank}, word: {word}, sub: {sub_word}.
@@ -125,10 +124,10 @@ Ints: word: {str_to_int(word)}, sub: {str_to_int(sub_word)}
 """)
 
         while is_greater(word, sub_word) and rank + sub < len(iterable) - 1:
-            # print(f"! rank: {rank}, sub: {sub}, word: {word}, sub_word: {sub_word}")
             iterable[rank + sub - 1] = sub_word
             sub += 1
             sub_word = iterable[rank + sub]
+
             if IGNORE_CASE:
                 sub_word = sub_word.lower()
         

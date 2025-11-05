@@ -1,6 +1,7 @@
 """
 ANAGRAM
 permutations.py
+Forecast permutations quantity.
 """
 import math
 

@@ -26,6 +26,7 @@ Default: `default`.
     "--noloading": "",
     "--noascii": "",
     "--nocredits": "",
+    "--nocolor": "",
     "--readme": "",
 }
 

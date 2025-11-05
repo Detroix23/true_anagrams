@@ -5,8 +5,8 @@ import time
 import pathlib
 from typing import TextIO, Final
 
-import modules.dictionaries as dictionaries
-import modules.anagrams as anagrams
+import dictionaries.base as dictionaries
+import anagrams.base as anagrams
 import modules.paths as paths
 import debug.logs
 
@@ -20,7 +20,7 @@ def write_result_line(file: TextIO, word: str, matching: set[str]) -> str:
     word, anagram1, anagram2, ... <EOL>
     ```
     """
-    line: str = f"{word}, [{", ".join(matching)}]\n"
+    line: str = f"{word}, [{', '.join(matching)}]\n"
     debug.logs.dbg(line)
     file.write(line)
 
@@ -93,6 +93,3 @@ def main(name: str = "default") -> None:
 
 if __name__ == "__main__":
     main()
-
-
-

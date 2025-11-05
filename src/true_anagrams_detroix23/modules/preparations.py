@@ -1,6 +1,7 @@
 """
 TRUE ANAGRAMS.
 preparations.py
+Edit, sort given dictionaries.
 """
 import pathlib
 
