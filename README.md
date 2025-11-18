@@ -5,12 +5,12 @@ Find anagrams, and find if they exist in the dictionary.
 ## Dictionaries
 Set your own dictionaries in the `./data/dictionaries` directory.
 By default, the script comes with a `default` dictionary.
-    - It is French with ~22k words.
-    - Select a dictionary using the `-n` parameter.
+- It is French with ~22k words.
+- Select a dictionary using the `-n` parameter.
 
 ## Commands.
 Execute the file `./src/true_angrams_detroix23/__main__.py`.
-    - You will enter an interactive CLI.
+- You will enter an interactive CLI.
 To configure, type `--help` as an argument while executing the scirpt, to get help about other commands.
 
 ## Prequisites.
